@@ -54,7 +54,13 @@ export default {
       1000,  // Level 5
       2000,  // Level 6
       // Add more levels as needed
-    ]
+    ],
+    "comboChance": 0.005,
+    "comboDuration": 5000,
+    "comboInputTimeout": 10000,
+    "comboInputStartTime": 0,
+    "comboInputThreshold": 200, // milliseconds to differentiate between dot and dash
+    "lastInputTime": 0
   },
   "obstacle": {
     "speed": 5,
@@ -87,5 +93,11 @@ export default {
     "lowEnergy": "music/low-energy.wav",
     "jump": "music/jump.wav",
     "defaultOn": false
+  },
+  "morse": {
+    "A": ".-", "B": "-...", "C": "-.-.", "D": "-..", "E": ".", "F": "..-.", "G": "--.",
+    "H": "....", "I": "..", "J": ".---", "K": "-.-", "L": ".-..", "M": "--", "N": "-.",
+    "O": "---", "P": ".--.", "Q": "--.-", "R": ".-.", "S": "...", "T": "-", "U": "..-",
+    "V": "...-", "W": ".--", "X": "-..-", "Y": "-.--", "Z": "--.."
   }
 };

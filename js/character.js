@@ -67,4 +67,16 @@ export default class Character {
     setLevel(level) {
         this.level = level;
     }
+
+    isOnGround() {
+        return this.y + this.height >= this.groundY;
+    }
+
+    preserveEnergy() {
+        this.energyConsumptionRate = 0;
+    }
+
+    resumeEnergyConsumption() {
+        this.energyConsumptionRate = gameConfig.game.energyConsumptionRate;
+    }
 }
