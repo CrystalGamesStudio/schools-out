@@ -27,6 +27,7 @@ export default class Game {
             this.audio.mute();
         }
         this.obstaclesJumped = 0;
+        this.level = 1;
     }
 
     init() {
@@ -93,6 +94,8 @@ export default class Game {
         this.audio.stopAll();
         this.audio.play('gameStarts'); // Play the game start sound when resetting the game
         this.obstaclesJumped = 0;
+        this.level = 1;
+        this.updateLevel();
     }
 
     update() {
@@ -121,6 +124,8 @@ export default class Game {
             this.isGameOver = true;
             this.audio.play('gameOver');
         }
+
+        this.updateLevel();
     }
 
     checkObstaclesJumped() {
@@ -149,9 +154,10 @@ export default class Game {
             this.ui.renderScore(this.score);
             this.ui.renderEnergyBar(this.character.getEnergyPercentage());
             this.ui.renderObstaclesJumped(this.obstaclesJumped);
+            this.ui.renderLevel(this.level);
 
             if (this.isGameOver) {
-                this.ui.renderGameOverScreen(this.score, this.obstaclesJumped);
+                this.ui.renderGameOverScreen(this.score, this.obstaclesJumped, this.level);
             }
         }
     }
@@ -183,5 +189,24 @@ export default class Game {
         const type = types[Math.floor(Math.random() * types.length)];
         const obstacle = new Obstacle(this.canvas.width, this.groundY, type);
         this.obstacles.push(obstacle);
+    }
+
+    updateLevel() {
+        const totalPoints = this.score + this.obstaclesJumped;
+        const levels = gameConfig.game.levels;
+        let newLevel = 1;
+
+        for (let i = 0; i < levels.length; i++) {
+            if (totalPoints >= levels[i]) {
+                newLevel = i + 1;
+            } else {
+                break;
+            }
+        }
+
+        if (newLevel !== this.level) {
+            this.level = newLevel;
+            this.character.setLevel(this.level);
+        }
     }
 }

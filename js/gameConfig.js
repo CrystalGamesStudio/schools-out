@@ -45,7 +45,16 @@ export default {
     "maxEnergy": 100,
     "energyConsumptionRate": 0.5,
     "energyRefillRate": 2,
-    "obstaclesJumped": 0
+    "obstaclesJumped": 0,
+    "levels": [
+      0,     // Level 1
+      100,   // Level 2
+      250,   // Level 3
+      500,   // Level 4
+      1000,  // Level 5
+      2000,  // Level 6
+      // Add more levels as needed
+    ]
   },
   "obstacle": {
     "speed": 5,
