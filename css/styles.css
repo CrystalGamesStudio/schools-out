@@ -6,14 +6,20 @@ body {
     align-items: center;
     height: 100vh;
     background-color: #f0f0f0;
+    font-family: Arial, sans-serif;
 }
 
 #game-container {
     position: relative;
+    width: 800px;
+    height: 600px;
 }
 
 #game-canvas {
     border: 1px solid black;
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 
 #ui-overlay {
@@ -42,10 +48,9 @@ body {
     margin-bottom: 20px;
 }
 
-#start-again {
+.game-button {
     padding: 10px 20px;
     font-size: 18px;
-    background-color: #4CAF50;
     color: white;
     border: none;
     border-radius: 5px;
@@ -53,16 +58,31 @@ body {
     pointer-events: auto;
     display: none;
     position: absolute;
-    left: 50%;
-    top: 60%;
     transform: translate(-50%, -50%);
     z-index: 10;
+    transition: background-color 0.3s, transform 0.1s;
+}
+
+#start-again {
+    background-color: #4CAF50;
+}
+
+#select-character {
+    background-color: #3498db;
+}
+
+.game-button:hover {
+    filter: brightness(1.1);
+}
+
+.game-button:active {
+    transform: translate(-50%, -50%) scale(0.95);
 }
 
 #start-again:hover {
     background-color: #45a049;
 }
 
-#start-again:active {
-    transform: scale(0.95);
+#select-character:hover {
+    background-color: #2980b9;
 }

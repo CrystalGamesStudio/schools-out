@@ -1,6 +1,7 @@
 import Character from './character.js';
 import Obstacle from './obstacle.js';
-import Enemy from './enemy.js';
+import UI from './ui.js';
+import gameConfig from './gameConfig.js';
 
 export default class Game {
     constructor() {
@@ -8,25 +9,29 @@ export default class Game {
         this.ctx = this.canvas.getContext('2d');
         this.character = null;
         this.obstacles = [];
-        this.enemies = [];
         this.score = 0;
         this.isGameOver = false;
-        this.startAgainButton = document.getElementById('start-again');
         this.keys = {};
         this.lastJumpTime = 0;
-        this.jumpCooldown = 150; // Reduced cooldown for more responsive jumping
-        this.groundY = 500; // Define the ground level
+        this.jumpCooldown = gameConfig.game.jumpCooldown;
+        this.groundY = gameConfig.game.groundY;
         this.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        this.jumpArea = { x: 0, y: 0, width: this.canvas.width / 2, height: this.canvas.height };
+        this.ui = new UI(this.canvas, this.isMobile);
+        this.selectedCharacterType = null;
+        this.isGameStarted = false;
+        this.isCharacterSelectionActive = true;
     }
 
     init() {
-        this.canvas.width = 800;
-        this.canvas.height = 600;
-        this.resetGame();
+        this.canvas.width = gameConfig.canvas.width;
+        this.canvas.height = gameConfig.canvas.height;
         this.addKeyListeners();
-        this.addTouchListeners();
-        this.addStartAgainListener();
+        this.ui.init();
+        this.ui.onStartAgain = () => this.resetGame();
+        this.ui.onSelectCharacter = () => this.showCharacterSelection();
+        this.ui.onJump = () => this.handleJump();
+        this.ui.onCharacterSelect = (type) => this.startGameWithCharacter(type);
+        // The character selection is now handled by the UI class
     }
 
     addKeyListeners() {
@@ -42,18 +47,6 @@ export default class Game {
         });
     }
 
-    addTouchListeners() {
-        if (this.isMobile) {
-            this.canvas.addEventListener('touchstart', (e) => {
-                e.preventDefault(); // Prevent default touch behavior
-                const touch = e.touches[0];
-                if (touch.clientX < this.jumpArea.width) {
-                    this.handleJump();
-                }
-            });
-        }
-    }
-
     handleJump() {
         const currentTime = Date.now();
         if (currentTime - this.lastJumpTime > this.jumpCooldown) {
@@ -62,23 +55,37 @@ export default class Game {
         }
     }
 
-    addStartAgainListener() {
-        this.startAgainButton.addEventListener('click', () => {
-            this.resetGame();
-        });
+    showCharacterSelection() {
+        this.isGameOver = false;
+        this.isCharacterSelectionActive = true;
+        this.isGameStarted = false;
+        this.ui.hideGameOverButtons();
+    }
+
+    startGameWithCharacter(type) {
+        this.selectedCharacterType = type;
+        this.isCharacterSelectionActive = false;
+        this.resetGame();
+        this.isGameStarted = true;
     }
 
     resetGame() {
-        this.character = new Character(this.canvas.height, this.groundY);
+        if (!this.selectedCharacterType) {
+            this.isCharacterSelectionActive = true;
+            return;
+        }
+        const characterConfig = gameConfig.characters[this.selectedCharacterType];
+        this.character = new Character(this.canvas.height, this.groundY, characterConfig);
         this.obstacles = [];
-        this.enemies = [];
         this.score = 0;
         this.isGameOver = false;
-        this.startAgainButton.style.display = 'none';
+        this.ui.hideGameOverButtons();
+        this.isGameStarted = true;
+        this.isCharacterSelectionActive = false;
     }
 
     update() {
-        if (this.isGameOver) return;
+        if (!this.isGameStarted || this.isGameOver) return;
 
         if (this.keys['Space']) {
             this.handleJump();
@@ -86,7 +93,6 @@ export default class Game {
 
         this.character.update();
         this.updateObstacles();
-        this.updateEnemies();
         this.checkCollisions();
         this.score++;
 
@@ -103,87 +109,32 @@ export default class Game {
         this.ctx.fillStyle = 'green';
         this.ctx.fillRect(0, this.groundY, this.canvas.width, this.canvas.height - this.groundY);
         
-        this.character.render(this.ctx);
-        this.obstacles.forEach(obstacle => obstacle.render(this.ctx));
-        this.enemies.forEach(enemy => enemy.render(this.ctx));
+        if (this.isCharacterSelectionActive) {
+            this.ui.renderCharacterSelection();
+        } else if (this.isGameStarted) {
+            this.character.render(this.ctx);
+            this.obstacles.forEach(obstacle => obstacle.render(this.ctx));
 
-        // Render score
-        this.ctx.fillStyle = 'black';
-        this.ctx.font = '20px Arial';
-        this.ctx.fillText(`Score: ${this.score}`, 50, 50);
+            // Render UI elements
+            this.ui.renderScore(this.score);
+            this.ui.renderEnergyBar(this.character.getEnergyPercentage());
 
-        // Render energy bar
-        this.renderEnergyBar();
-
-        if (this.isGameOver) {
-            this.renderGameOverScreen();
+            if (this.isGameOver) {
+                this.ui.renderGameOverScreen(this.score);
+            }
         }
-    }
-
-    renderEnergyBar() {
-        const energyPercentage = this.character.getEnergyPercentage();
-        const barWidth = 200;
-        const barHeight = 20;
-        const x = this.canvas.width - barWidth - 10;
-        const y = 10;
-
-        // Draw background
-        this.ctx.fillStyle = 'gray';
-        this.ctx.fillRect(x, y, barWidth, barHeight);
-
-        // Draw energy level
-        this.ctx.fillStyle = energyPercentage > 20 ? 'green' : 'red';
-        this.ctx.fillRect(x, y, barWidth * (energyPercentage / 100), barHeight);
-
-        // Draw border
-        this.ctx.strokeStyle = 'black';
-        this.ctx.strokeRect(x, y, barWidth, barHeight);
-
-        // Draw text
-        this.ctx.fillStyle = 'black';
-        this.ctx.font = '16px Arial';
-        this.ctx.fillText('Energy', x + barWidth / 2 - 25, y + barHeight + 16);
-    }
-
-    renderGameOverScreen() {
-        // Semi-transparent overlay
-        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-
-        // Game Over text
-        this.ctx.fillStyle = 'red';
-        this.ctx.font = '40px Arial';
-        this.ctx.textAlign = 'center';
-        this.ctx.fillText('Game Over', this.canvas.width / 2, this.canvas.height / 2 - 50);
-        this.ctx.fillText(`Final Score: ${this.score}`, this.canvas.width / 2, this.canvas.height / 2);       
-
-        // Display the button
-        this.startAgainButton.style.display = 'block';
-        this.startAgainButton.style.position = 'absolute';
-        this.startAgainButton.style.left = '50%';
-        this.startAgainButton.style.top = '60%';
-        this.startAgainButton.style.transform = 'translate(-50%, -50%)';
     }
 
     updateObstacles() {
         this.obstacles.forEach(obstacle => obstacle.update());
         this.obstacles = this.obstacles.filter(obstacle => !obstacle.isOffScreen());
 
-        if (Math.random() < 0.02) {
+        if (Math.random() < gameConfig.game.obstacleSpawnChance) {
             this.addObstacle();
         }
     }
 
-    updateEnemies() {
-        this.enemies.forEach(enemy => enemy.update);
-
-        if (Math.random() < 0.005) {
-            this.addEnemy();
-        }
-    }
-
     checkCollisions() {
-        // Check collisions with obstacles
         for (let obstacle of this.obstacles) {
             if (this.character.x < obstacle.x + obstacle.width &&
                 this.character.x + this.character.width > obstacle.x &&
@@ -193,30 +144,12 @@ export default class Game {
                 break;
             }
         }
-
-        // Check collisions with enemies
-        for (let enemy of this.enemies) {
-            if (this.character.x < enemy.x + enemy.width &&
-                this.character.x + this.character.width > enemy.x &&
-                this.character.y < enemy.y + enemy.height &&
-                this.character.y + this.character.height > enemy.y) {
-                this.isGameOver = true;
-                break;
-            }
-        }
     }
 
     addObstacle() {
-        const types = ['alarm_clock', 'book', 'pencil_case'];
+        const types = gameConfig.obstacle.types;
         const type = types[Math.floor(Math.random() * types.length)];
-        const obstacle = new Obstacle(this.canvas.width, this.groundY, 30, 50, type);
+        const obstacle = new Obstacle(this.canvas.width, this.groundY, type);
         this.obstacles.push(obstacle);
-    }
-
-    addEnemy() {
-        const types = ['math_teacher', 'science_teacher', 'gym_teacher'];
-        const type = types[Math.floor(Math.random() * types.length)];
-        const enemy = new Enemy(this.canvas.width, this.groundY - 60, 40, 60, type);
-        this.enemies.push(enemy);
     }
 }

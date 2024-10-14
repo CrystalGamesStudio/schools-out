@@ -1,18 +1,21 @@
+import gameConfig from './gameConfig.js';
+
 export default class Character {
-    constructor(canvasHeight, groundY) {
-        this.x = 50;
-        this.y = groundY - 60; // Start on the ground
-        this.width = 40;
-        this.height = 60;
+    constructor(canvasHeight, groundY, characterConfig) {
+        this.x = gameConfig.game.startX;
+        this.y = groundY - characterConfig.height;
+        this.width = characterConfig.width;
+        this.height = characterConfig.height;
+        this.color = characterConfig.color;
         this.velocity = 0;
-        this.gravity = 0.5;
-        this.jumpStrength = -10;
+        this.gravity = gameConfig.game.gravity;
+        this.jumpStrength = characterConfig.jumpStrength;
         this.canvasHeight = canvasHeight;
         this.groundY = groundY;
-        this.maxEnergy = 100;
+        this.maxEnergy = gameConfig.game.maxEnergy;
         this.energy = this.maxEnergy;
-        this.energyConsumptionRate = 0.5;
-        this.energyRefillRate = 2;
+        this.energyConsumptionRate = gameConfig.game.energyConsumptionRate;
+        this.energyRefillRate = gameConfig.game.energyRefillRate;
     }
 
     update() {
@@ -38,7 +41,7 @@ export default class Character {
     }
 
     render(ctx) {
-        ctx.fillStyle = 'blue';
+        ctx.fillStyle = this.color;
         ctx.fillRect(this.x, this.y, this.width, this.height);
     }
 
@@ -47,10 +50,6 @@ export default class Character {
         if (this.energy > 0) {
             this.velocity = this.jumpStrength;
         }
-    }
-
-    shoot() {
-        // Implement shooting logic (to be added later)
     }
 
     getEnergyPercentage() {
