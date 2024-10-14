@@ -1,6 +1,6 @@
 1. [ ] Add character sprites
 2. [ ] Add obstacle sprites
-3. [ ] Add sound effects
+3. [x] Add sound effects
 4. [ ] Add background music
 5. [ ] Add leaderboard
 6. [x] Add character selection

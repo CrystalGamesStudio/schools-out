@@ -1,6 +1,7 @@
 import Character from './character.js';
 import Obstacle from './obstacle.js';
 import UI from './ui.js';
+import GameAudio from './audio.js';
 import gameConfig from './gameConfig.js';
 
 export default class Game {
@@ -20,6 +21,7 @@ export default class Game {
         this.selectedCharacterType = null;
         this.isGameStarted = false;
         this.isCharacterSelectionActive = true;
+        this.audio = new GameAudio();
     }
 
     init() {
@@ -52,6 +54,7 @@ export default class Game {
         if (currentTime - this.lastJumpTime > this.jumpCooldown) {
             this.character.jump();
             this.lastJumpTime = currentTime;
+            this.audio.play('jump');
         }
     }
 
@@ -67,6 +70,7 @@ export default class Game {
         this.isCharacterSelectionActive = false;
         this.resetGame();
         this.isGameStarted = true;
+        this.audio.play('gameStarts');
     }
 
     resetGame() {
@@ -82,6 +86,8 @@ export default class Game {
         this.ui.hideGameOverButtons();
         this.isGameStarted = true;
         this.isCharacterSelectionActive = false;
+        this.audio.stopAll();
+        this.audio.play('gameStarts'); // Play the game start sound when resetting the game
     }
 
     update() {
@@ -96,9 +102,18 @@ export default class Game {
         this.checkCollisions();
         this.score++;
 
+        // Check if energy is low
+        const energyPercentage = this.character.getEnergyPercentage();
+        if (energyPercentage <= 20) {
+            this.audio.playLowEnergy();
+        } else {
+            this.audio.stopLowEnergy();
+        }
+
         // Check if energy has run out
-        if (this.character.getEnergyPercentage() === 0) {
+        if (energyPercentage === 0) {
             this.isGameOver = true;
+            this.audio.play('gameOver');
         }
     }
 
@@ -141,6 +156,7 @@ export default class Game {
                 this.character.y < obstacle.y + obstacle.height &&
                 this.character.y + this.character.height > obstacle.y) {
                 this.isGameOver = true;
+                this.audio.play('gameOver');
                 break;
             }
         }

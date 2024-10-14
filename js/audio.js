@@ -1,27 +1,43 @@
-export default class Audio {
+import gameConfig from './gameConfig.js';
+
+export default class GameAudio {
     constructor() {
-        this.backgroundMusic = null;
-        this.sfx = {
-            jump: null,
-            shoot: null,
-            collision: null
+        this.sounds = {
+            gameOver: new window.Audio(gameConfig.audio.gameOver),
+            gameStarts: new window.Audio(gameConfig.audio.gameStarts),
+            lowEnergy: new window.Audio(gameConfig.audio.lowEnergy),
+            jump: new window.Audio(gameConfig.audio.jump)
         };
+        this.isLowEnergyPlaying = false;
     }
 
-    init() {
-        // Load audio files
-        this.loadAudio();
+    play(soundName) {
+        if (this.sounds[soundName]) {
+            this.sounds[soundName].currentTime = 0; // Reset the audio to the beginning
+            this.sounds[soundName].play();
+        }
     }
 
-    loadAudio() {
-        // Load background music and sound effects
+    stopAll() {
+        Object.values(this.sounds).forEach(sound => {
+            sound.pause();
+            sound.currentTime = 0;
+        });
+        this.isLowEnergyPlaying = false;
     }
 
-    playBackgroundMusic() {
-        // Play background music
+    playLowEnergy() {
+        if (!this.isLowEnergyPlaying) {
+            this.play('lowEnergy');
+            this.isLowEnergyPlaying = true;
+        }
     }
 
-    playSFX(sound) {
-        // Play a specific sound effect
+    stopLowEnergy() {
+        if (this.isLowEnergyPlaying) {
+            this.sounds.lowEnergy.pause();
+            this.sounds.lowEnergy.currentTime = 0;
+            this.isLowEnergyPlaying = false;
+        }
     }
 }

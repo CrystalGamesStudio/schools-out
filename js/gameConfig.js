@@ -70,5 +70,11 @@ export default {
     "scoreBarHeight": 30,
     "energyBarWidth": 200,
     "energyBarHeight": 30
-    }
+  },
+  "audio": {
+    "gameOver": "music/game-over.wav",
+    "gameStarts": "music/game-starts.wav",
+    "lowEnergy": "music/low-energy.wav",
+    "jump": "music/jump.wav"
+  }
 };
