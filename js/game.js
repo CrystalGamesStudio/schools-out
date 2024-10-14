@@ -16,6 +16,8 @@ export default class Game {
         this.lastJumpTime = 0;
         this.jumpCooldown = 150; // Reduced cooldown for more responsive jumping
         this.groundY = 500; // Define the ground level
+        this.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        this.jumpArea = { x: 0, y: 0, width: this.canvas.width / 2, height: this.canvas.height };
     }
 
     init() {
@@ -23,6 +25,7 @@ export default class Game {
         this.canvas.height = 600;
         this.resetGame();
         this.addKeyListeners();
+        this.addTouchListeners();
         this.addStartAgainListener();
     }
 
@@ -37,6 +40,26 @@ export default class Game {
         document.addEventListener('keyup', (e) => {
             this.keys[e.code] = false;
         });
+    }
+
+    addTouchListeners() {
+        if (this.isMobile) {
+            this.canvas.addEventListener('touchstart', (e) => {
+                e.preventDefault(); // Prevent default touch behavior
+                const touch = e.touches[0];
+                if (touch.clientX < this.jumpArea.width) {
+                    this.handleJump();
+                }
+            });
+        }
+    }
+
+    handleJump() {
+        const currentTime = Date.now();
+        if (currentTime - this.lastJumpTime > this.jumpCooldown) {
+            this.character.jump();
+            this.lastJumpTime = currentTime;
+        }
     }
 
     addStartAgainListener() {
@@ -57,10 +80,8 @@ export default class Game {
     update() {
         if (this.isGameOver) return;
 
-        const currentTime = Date.now();
-        if (this.keys['Space'] && currentTime - this.lastJumpTime > this.jumpCooldown) {
-            this.character.jump();
-            this.lastJumpTime = currentTime;
+        if (this.keys['Space']) {
+            this.handleJump();
         }
 
         this.character.update();
