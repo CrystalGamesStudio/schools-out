@@ -22,6 +22,11 @@ export default class Game {
         this.isGameStarted = false;
         this.isCharacterSelectionActive = true;
         this.audio = new GameAudio();
+        this.isAudioOn = gameConfig.audio.defaultOn;
+        if (!this.isAudioOn) {
+            this.audio.mute();
+        }
+        this.obstaclesJumped = 0;
     }
 
     init() {
@@ -33,7 +38,6 @@ export default class Game {
         this.ui.onSelectCharacter = () => this.showCharacterSelection();
         this.ui.onJump = () => this.handleJump();
         this.ui.onCharacterSelect = (type) => this.startGameWithCharacter(type);
-        // The character selection is now handled by the UI class
     }
 
     addKeyListeners() {
@@ -88,6 +92,7 @@ export default class Game {
         this.isCharacterSelectionActive = false;
         this.audio.stopAll();
         this.audio.play('gameStarts'); // Play the game start sound when resetting the game
+        this.obstaclesJumped = 0;
     }
 
     update() {
@@ -100,6 +105,7 @@ export default class Game {
         this.character.update();
         this.updateObstacles();
         this.checkCollisions();
+        this.checkObstaclesJumped();
         this.score++;
 
         // Check if energy is low
@@ -115,6 +121,15 @@ export default class Game {
             this.isGameOver = true;
             this.audio.play('gameOver');
         }
+    }
+
+    checkObstaclesJumped() {
+        this.obstacles.forEach(obstacle => {
+            if (!obstacle.passed && obstacle.x + obstacle.width < this.character.x) {
+                obstacle.passed = true;
+                this.obstaclesJumped++;
+            }
+        });
     }
 
     render() {
@@ -133,9 +148,10 @@ export default class Game {
             // Render UI elements
             this.ui.renderScore(this.score);
             this.ui.renderEnergyBar(this.character.getEnergyPercentage());
+            this.ui.renderObstaclesJumped(this.obstaclesJumped);
 
             if (this.isGameOver) {
-                this.ui.renderGameOverScreen(this.score);
+                this.ui.renderGameOverScreen(this.score, this.obstaclesJumped);
             }
         }
     }

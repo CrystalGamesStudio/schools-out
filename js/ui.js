@@ -142,7 +142,35 @@ export default class UI {
         this.ctx.fillText(`${Math.round(energyPercentage)}%`, x + barWidth - 5, y + barHeight / 2);
     }
 
-    renderGameOverScreen(score) {
+    renderObstaclesJumped(obstaclesJumped) {
+        const barWidth = 200;
+        const barHeight = 30;
+        const x = 10;
+        const y = 50; // Position it below the score
+
+        // Draw background
+        this.ctx.fillStyle = 'gray';
+        this.ctx.fillRect(x, y, barWidth, barHeight);
+
+        // Draw border
+        this.ctx.strokeStyle = 'black';
+        this.ctx.strokeRect(x, y, barWidth, barHeight);
+
+        // Draw text
+        this.ctx.fillStyle = 'white';
+        this.ctx.font = 'bold 16px Arial';
+        this.ctx.textAlign = 'center';
+        this.ctx.textBaseline = 'middle';
+        this.ctx.fillText('Obstacles Jumped', x + barWidth / 2, y + barHeight / 2);
+
+        // Draw count
+        this.ctx.fillStyle = 'white';
+        this.ctx.font = '14px Arial';
+        this.ctx.textAlign = 'right';
+        this.ctx.fillText(`${obstaclesJumped}`, x + barWidth - 5, y + barHeight / 2);
+    }
+
+    renderGameOverScreen(score, obstaclesJumped) {
         // Semi-transparent overlay
         this.ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
@@ -164,6 +192,8 @@ export default class UI {
         this.selectCharacterButton.style.display = 'block';
         this.selectCharacterButton.style.left = '65%';
         this.selectCharacterButton.style.top = `${buttonY}px`;
+
+        this.ctx.fillText(`Obstacles Jumped: ${obstaclesJumped}`, this.canvas.width / 2, this.canvas.height / 2 + 40);
     }
 
     hideGameOverButtons() {

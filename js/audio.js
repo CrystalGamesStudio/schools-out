@@ -9,10 +9,11 @@ export default class GameAudio {
             jump: new window.Audio(gameConfig.audio.jump)
         };
         this.isLowEnergyPlaying = false;
+        this.isMuted = !gameConfig.audio.defaultOn;
     }
 
     play(soundName) {
-        if (this.sounds[soundName]) {
+        if (this.sounds[soundName] && !this.isMuted) {
             this.sounds[soundName].currentTime = 0; // Reset the audio to the beginning
             this.sounds[soundName].play();
         }
@@ -39,5 +40,21 @@ export default class GameAudio {
             this.sounds.lowEnergy.currentTime = 0;
             this.isLowEnergyPlaying = false;
         }
+    }
+
+    mute() {
+        console.log('GameAudio: muting'); // Add this line
+        this.isMuted = true;
+        Object.values(this.sounds).forEach(sound => {
+            sound.muted = true;
+        });
+    }
+
+    unmute() {
+        console.log('GameAudio: unmuting'); // Add this line
+        this.isMuted = false;
+        Object.values(this.sounds).forEach(sound => {
+            sound.muted = false;
+        });
     }
 }

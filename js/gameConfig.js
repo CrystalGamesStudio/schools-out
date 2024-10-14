@@ -44,7 +44,8 @@ export default {
     "startX": 50,
     "maxEnergy": 100,
     "energyConsumptionRate": 0.5,
-    "energyRefillRate": 2
+    "energyRefillRate": 2,
+    "obstaclesJumped": 0
   },
   "obstacle": {
     "speed": 5,
@@ -75,6 +76,7 @@ export default {
     "gameOver": "music/game-over.wav",
     "gameStarts": "music/game-starts.wav",
     "lowEnergy": "music/low-energy.wav",
-    "jump": "music/jump.wav"
+    "jump": "music/jump.wav",
+    "defaultOn": false
   }
 };
