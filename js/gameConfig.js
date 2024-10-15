@@ -9,34 +9,55 @@ export default {
       "width": 40,
       "height": 60,
       "color": "#FFD700",
+      "fontColor": "#000000",
       "jumpStrength": -10
     },
     "nerd": {
       "width": 35,
       "height": 55,
       "color": "#4B0082",
+      "fontColor": "#FFFFFF",
       "jumpStrength": -9
     },
     "athlete": {
       "width": 45,
       "height": 65,
       "color": "#FF4500",
+      "fontColor": "#FFFFFF",
       "jumpStrength": -11
     },
     "artist": {
       "width": 38,
       "height": 58,
       "color": "#8A2BE2",
+      "fontColor": "#FFFFFF",
       "jumpStrength": -9.5
     },
     "rebel": {
       "width": 42,
       "height": 62,
       "color": "#000000",
+      "fontColor": "#FFFFFF",
       "jumpStrength": -10.5
     }
   },
+  "gameOverButtons": {
+    "types": ["startAgain", "selectCharacter"],
+    "startAgain": {
+      "text": "Start Again",
+      "action": "startAgain",
+      "color": "#FF4500",
+      "fontColor": "#FFFFFF"
+    },
+    "selectCharacter": {
+      "text": "Select Character",
+      "action": "selectCharacter",
+      "color": "#4B0082",
+      "fontColor": "#FFFFFF"
+    }
+  },
   "game": {
+    "groundColor": "#4CAF50",
     "groundY": 500,
     "jumpCooldown": 150,
     "obstacleSpawnChance": 0.02,
@@ -45,6 +66,7 @@ export default {
     "maxEnergy": 100,
     "energyConsumptionRate": 0.5,
     "energyRefillRate": 2,
+    "energyPercentageThreshold": 20,
     "obstaclesJumped": 0,
     "levels": [
       0,     // Level 1
@@ -85,7 +107,9 @@ export default {
     "scoreBarWidth": 200,
     "scoreBarHeight": 30,
     "energyBarWidth": 200,
-    "energyBarHeight": 30
+    "energyBarHeight": 30,
+    "energyBarHighColor": "green",
+    "energyBarLowColor": "red"
   },
   "audio": {
     "gameOver": "music/game-over.wav",

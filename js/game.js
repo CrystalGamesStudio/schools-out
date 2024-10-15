@@ -6,6 +6,7 @@ import gameConfig from './gameConfig.js';
 
 export default class Game {
     constructor() {
+        console.log('Game constructor called');
         this.canvas = document.getElementById('game-canvas');
         this.ctx = this.canvas.getContext('2d');
         this.character = null;
@@ -35,28 +36,33 @@ export default class Game {
         this.comboStartTime = 0;
         this.comboEnergyPreservationEndTime = 0;
         this.isPaused = false;
+        this.animationFrameId = null;
     }
 
-    init() {
+    async init() {
+        console.log('Game init method called');
+        if (!window.uiTemplates) {
+            console.error('UI templates not loaded. Make sure ui-templates.js is included and loaded properly.');
+            return;
+        }
+        await window.uiTemplates.load();
         this.canvas.width = gameConfig.canvas.width;
         this.canvas.height = gameConfig.canvas.height;
         this.addKeyListeners();
+        console.log('Calling UI init');
         this.ui.init();
-        this.ui.onStartAgain = () => this.resetGame();
-        this.ui.onSelectCharacter = () => this.showCharacterSelection();
+        this.ui.startAgain = () => {
+            console.log('Start Again triggered in Game');
+            this.resetGame();
+        };
+        this.ui.selectCharacter = () => {
+            console.log('Select Character triggered in Game');
+            this.showCharacterSelection();
+        };
         this.ui.onJump = () => this.handleJump();
         this.ui.onCharacterSelect = (type) => this.startGameWithCharacter(type);
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && this.comboActive) {
-                gameConfig.game.lastInputTime = Date.now();
-            }
-        });
-        document.addEventListener('keyup', (e) => {
-            if (e.key === 'Enter' && this.comboActive) {
-                this.handleComboInput(Date.now() - gameConfig.game.lastInputTime);
-            }
-        });
-        this.ui.onComboInput = (duration) => this.handleComboInput(duration);
+        console.log('Showing character selection');
+        this.showCharacterSelection();
     }
 
     addKeyListeners() {
@@ -65,10 +71,17 @@ export default class Game {
             if (e.code === 'Space') {
                 e.preventDefault(); // Prevent scrolling when spacebar is pressed
             }
+            if (e.code === 'Enter' && this.comboActive) {
+                e.preventDefault();
+                this.handleMorseInput('start');
+            }
         });
 
         document.addEventListener('keyup', (e) => {
             this.keys[e.code] = false;
+            if (e.code === 'Enter' && this.comboActive) {
+                this.handleMorseInput('end');
+            }
         });
     }
 
@@ -82,23 +95,27 @@ export default class Game {
     }
 
     showCharacterSelection() {
-        this.isGameOver = false;
+        console.log('Showing character selection');
+        this.ui.hideGameOverScreen();
         this.isCharacterSelectionActive = true;
         this.isGameStarted = false;
-        this.ui.hideGameOverButtons();
+        this.ui.renderCharacterSelection();
     }
 
     startGameWithCharacter(type) {
         this.selectedCharacterType = type;
         this.isCharacterSelectionActive = false;
+        this.ui.hideCharacterSelection();
         this.resetGame();
         this.isGameStarted = true;
         this.audio.play('gameStarts');
     }
 
     resetGame() {
+        console.log('Resetting game');
+        this.ui.hideGameOverScreen(); // Add this line
         if (!this.selectedCharacterType) {
-            this.isCharacterSelectionActive = true;
+            this.showCharacterSelection();
             return;
         }
         const characterConfig = gameConfig.characters[this.selectedCharacterType];
@@ -106,21 +123,51 @@ export default class Game {
         this.obstacles = [];
         this.score = 0;
         this.isGameOver = false;
-        this.ui.hideGameOverButtons();
+        this.ui.hideGameOverScreen();
         this.isGameStarted = true;
         this.isCharacterSelectionActive = false;
         this.audio.stopAll();
-        this.audio.play('gameStarts'); // Play the game start sound when resetting the game
+        this.audio.play('gameStarts');
         this.obstaclesJumped = 0;
         this.level = 1;
         this.updateLevel();
+        this.startGame();
+    }
+
+    gameLoop() {
+        console.log('Game loop iteration');
+        if (!this.isGameOver) {
+            this.update();
+            this.render();
+            this.animationFrameId = requestAnimationFrame(() => this.gameLoop());
+        } else {
+            this.handleGameOver();
+        }
+    }
+
+    handleGameOver() {
+        console.log('Handling game over');
+        cancelAnimationFrame(this.animationFrameId);
+        this.ui.renderGameOverScreen(this.score, this.obstaclesJumped, this.level);
+    }
+
+    startGame() {
+        this.isGameOver = false;
+        this.isGameStarted = true;
+        this.ui.init(); // Reinitialize UI elements
+        this.gameLoop();
     }
 
     update() {
+        console.log('Game update called');
         if (!this.isGameStarted || this.isGameOver) return;
 
         if (this.comboActive) {
-            if (Date.now() - this.comboStartTime > gameConfig.game.comboInputTimeout) {
+            // Only update the combo timer when combo is active
+            const elapsedTime = Date.now() - this.comboStartTime;
+            this.ui.renderCombo(this.comboLetter, this.comboMorse, this.comboInput, elapsedTime);
+            
+            if (elapsedTime > gameConfig.game.comboInputTimeout) {
                 this.endCombo();
             }
             return; // Skip other updates while combo is active
@@ -138,7 +185,7 @@ export default class Game {
 
         // Check if energy is low
         const energyPercentage = this.character.getEnergyPercentage();
-        if (energyPercentage <= 20) {
+        if (energyPercentage <= gameConfig.game.energyPercentageThreshold) {
             this.audio.playLowEnergy();
         } else {
             this.audio.stopLowEnergy();
@@ -146,6 +193,7 @@ export default class Game {
 
         // Check if energy has run out
         if (energyPercentage === 0) {
+            console.log('Game Over state triggered');
             this.isGameOver = true;
             this.audio.play('gameOver');
         }
@@ -162,6 +210,12 @@ export default class Game {
         }
 
         this.updateLevel();
+
+        // Update UI elements
+        this.ui.updateScore(this.score);
+        this.ui.updateEnergyBar(this.character.getEnergyPercentage());
+        this.ui.updateObstaclesJumped(this.obstaclesJumped);
+        this.ui.updateLevel(this.level);
     }
 
     checkObstaclesJumped() {
@@ -174,28 +228,27 @@ export default class Game {
     }
 
     render() {
+        console.log('Game render called');
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         
         // Draw the ground
-        this.ctx.fillStyle = 'green';
+        this.ctx.fillStyle = gameConfig.game.groundColor;
         this.ctx.fillRect(0, this.groundY, this.canvas.width, this.canvas.height - this.groundY);
         
         if (this.isCharacterSelectionActive) {
-            this.ui.renderCharacterSelection();
-        } else if (this.isGameStarted) {
+            // Don't render game elements during character selection
+            return;
+        }
+
+        if (this.isGameStarted) {
             this.character.render(this.ctx);
             this.obstacles.forEach(obstacle => obstacle.render(this.ctx));
-
-            // Render UI elements
-            this.ui.renderScore(this.score);
-            this.ui.renderEnergyBar(this.character.getEnergyPercentage());
-            this.ui.renderObstaclesJumped(this.obstaclesJumped);
-            this.ui.renderLevel(this.level);
-
-            if (this.isGameOver) {
-                this.ui.renderGameOverScreen(this.score, this.obstaclesJumped, this.level);
-            }
         }
+
+        if (this.isGameOver) {
+            this.ui.renderGameOverScreen(this.score, this.obstaclesJumped, this.level);
+        }
+
         if (this.comboActive) {
             this.ui.renderCombo(this.comboLetter, this.comboMorse, this.comboInput, Date.now() - this.comboStartTime);
         }
@@ -273,27 +326,59 @@ export default class Game {
         this.comboInput = '';
         this.comboActive = true;
         this.comboStartTime = Date.now();
-        gameConfig.game.comboInputStartTime = Date.now(); // Update this line
-        this.isPaused = true;
+        console.log('Combo started:', this.comboLetter, this.comboMorse);
+        this.ui.renderCombo(this.comboLetter, this.comboMorse, this.comboInput, 0);
     }
 
     endCombo() {
-        this.isPaused = false;
-        if (this.comboInput === this.comboMorse) {
-            this.comboSuccess();
-        } else {
-            this.comboFail();
-        }
         this.comboActive = false;
-        this.comboInput = '';
+        this.ui.hideCombo();
+        console.log('Combo ended');
     }
 
     comboSuccess() {
+        console.log('Combo successful');
         this.comboEnergyPreservationEndTime = Date.now() + gameConfig.game.comboDuration;
-        // Maybe add some visual/audio feedback for success
+        // Add visual/audio feedback for success
+        this.audio.play('comboSuccess'); // Assuming you have a success sound
     }
 
     comboFail() {
         // Maybe add some visual/audio feedback for failure
+    }
+
+    startAgain() {
+        console.log('Start Again clicked');
+        this.resetGame();
+    }
+
+    selectCharacter() {
+        console.log('Select Character clicked');
+        this.showCharacterSelection();
+    }
+
+    handleMorseInput(action) {
+        if (action === 'start') {
+            this.morseInputStartTime = Date.now();
+        } else if (action === 'end') {
+            const duration = Date.now() - this.morseInputStartTime;
+            const input = this.getMorseInput(duration);
+            this.comboInput += input;
+            console.log('Morse input:', input, 'Current combo:', this.comboInput);
+            
+            if (this.comboInput === this.comboMorse) {
+                console.log('Correct Morse code entered');
+                this.comboSuccess();
+                this.endCombo();
+                this.ui.hideCombo(); // Add this line to hide the combo screen
+            } else if (!this.comboMorse.startsWith(this.comboInput)) {
+                console.log('Incorrect Morse code, resetting input');
+                this.comboInput = '';
+            }
+            
+            if (this.comboActive) {
+                this.ui.renderCombo(this.comboLetter, this.comboMorse, this.comboInput, Date.now() - this.comboStartTime);
+            }
+        }
     }
 }
