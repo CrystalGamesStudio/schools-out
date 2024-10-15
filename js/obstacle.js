@@ -7,6 +7,7 @@ export default class Obstacle {
         this.type = type;
         this.speed = gameConfig.obstacle.speed;
         this.setProperties();
+        this.passed = false;
     }
 
     setProperties() {

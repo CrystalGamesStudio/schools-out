@@ -5,4 +5,4 @@
 5. [ ] Add leaderboard
 6. [x] Add character selection
 7. [ ] Add pause menu
-8. [ ] Add combo system (morse code generated)
+8. [x] Add combo system (morse code generated)

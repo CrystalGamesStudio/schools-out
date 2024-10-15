@@ -16,6 +16,7 @@ export default class Character {
         this.energy = this.maxEnergy;
         this.energyConsumptionRate = gameConfig.game.energyConsumptionRate;
         this.energyRefillRate = gameConfig.game.energyRefillRate;
+        this.level = 1;
     }
 
     update() {
@@ -43,6 +44,13 @@ export default class Character {
     render(ctx) {
         ctx.fillStyle = this.color;
         ctx.fillRect(this.x, this.y, this.width, this.height);
+
+        // Render level inside the character
+        ctx.fillStyle = 'white';
+        ctx.font = 'bold 16px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(this.level.toString(), this.x + this.width / 2, this.y + this.height / 2);
     }
 
     jump() {
@@ -54,5 +62,21 @@ export default class Character {
 
     getEnergyPercentage() {
         return (this.energy / this.maxEnergy) * 100;
+    }
+
+    setLevel(level) {
+        this.level = level;
+    }
+
+    isOnGround() {
+        return this.y + this.height >= this.groundY;
+    }
+
+    preserveEnergy() {
+        this.energyConsumptionRate = 0;
+    }
+
+    resumeEnergyConsumption() {
+        this.energyConsumptionRate = gameConfig.game.energyConsumptionRate;
     }
 }

@@ -22,6 +22,19 @@ export default class Game {
         this.isGameStarted = false;
         this.isCharacterSelectionActive = true;
         this.audio = new GameAudio();
+        this.isAudioOn = gameConfig.audio.defaultOn;
+        if (!this.isAudioOn) {
+            this.audio.mute();
+        }
+        this.obstaclesJumped = 0;
+        this.level = 1;
+        this.comboActive = false;
+        this.comboLetter = '';
+        this.comboMorse = '';
+        this.comboInput = '';
+        this.comboStartTime = 0;
+        this.comboEnergyPreservationEndTime = 0;
+        this.isPaused = false;
     }
 
     init() {
@@ -33,7 +46,17 @@ export default class Game {
         this.ui.onSelectCharacter = () => this.showCharacterSelection();
         this.ui.onJump = () => this.handleJump();
         this.ui.onCharacterSelect = (type) => this.startGameWithCharacter(type);
-        // The character selection is now handled by the UI class
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && this.comboActive) {
+                gameConfig.game.lastInputTime = Date.now();
+            }
+        });
+        document.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter' && this.comboActive) {
+                this.handleComboInput(Date.now() - gameConfig.game.lastInputTime);
+            }
+        });
+        this.ui.onComboInput = (duration) => this.handleComboInput(duration);
     }
 
     addKeyListeners() {
@@ -88,10 +111,20 @@ export default class Game {
         this.isCharacterSelectionActive = false;
         this.audio.stopAll();
         this.audio.play('gameStarts'); // Play the game start sound when resetting the game
+        this.obstaclesJumped = 0;
+        this.level = 1;
+        this.updateLevel();
     }
 
     update() {
         if (!this.isGameStarted || this.isGameOver) return;
+
+        if (this.comboActive) {
+            if (Date.now() - this.comboStartTime > gameConfig.game.comboInputTimeout) {
+                this.endCombo();
+            }
+            return; // Skip other updates while combo is active
+        }
 
         if (this.keys['Space']) {
             this.handleJump();
@@ -100,6 +133,7 @@ export default class Game {
         this.character.update();
         this.updateObstacles();
         this.checkCollisions();
+        this.checkObstaclesJumped();
         this.score++;
 
         // Check if energy is low
@@ -115,6 +149,28 @@ export default class Game {
             this.isGameOver = true;
             this.audio.play('gameOver');
         }
+
+        if (!this.character.isOnGround() && !this.comboActive && Math.random() < gameConfig.game.comboChance) {
+            this.startCombo();
+        }
+
+        // Check if energy preservation is active
+        if (Date.now() < this.comboEnergyPreservationEndTime) {
+            this.character.preserveEnergy();
+        } else {
+            this.character.resumeEnergyConsumption();
+        }
+
+        this.updateLevel();
+    }
+
+    checkObstaclesJumped() {
+        this.obstacles.forEach(obstacle => {
+            if (!obstacle.passed && obstacle.x + obstacle.width < this.character.x) {
+                obstacle.passed = true;
+                this.obstaclesJumped++;
+            }
+        });
     }
 
     render() {
@@ -133,10 +189,15 @@ export default class Game {
             // Render UI elements
             this.ui.renderScore(this.score);
             this.ui.renderEnergyBar(this.character.getEnergyPercentage());
+            this.ui.renderObstaclesJumped(this.obstaclesJumped);
+            this.ui.renderLevel(this.level);
 
             if (this.isGameOver) {
-                this.ui.renderGameOverScreen(this.score);
+                this.ui.renderGameOverScreen(this.score, this.obstaclesJumped, this.level);
             }
+        }
+        if (this.comboActive) {
+            this.ui.renderCombo(this.comboLetter, this.comboMorse, this.comboInput, Date.now() - this.comboStartTime);
         }
     }
 
@@ -167,5 +228,72 @@ export default class Game {
         const type = types[Math.floor(Math.random() * types.length)];
         const obstacle = new Obstacle(this.canvas.width, this.groundY, type);
         this.obstacles.push(obstacle);
+    }
+
+    updateLevel() {
+        const totalPoints = this.score + this.obstaclesJumped;
+        const levels = gameConfig.game.levels;
+        let newLevel = 1;
+
+        for (let i = 0; i < levels.length; i++) {
+            if (totalPoints >= levels[i]) {
+                newLevel = i + 1;
+            } else {
+                break;
+            }
+        }
+
+        if (newLevel !== this.level) {
+            this.level = newLevel;
+            this.character.setLevel(this.level);
+        }
+    }
+
+    handleComboInput(duration) {
+        if (this.comboActive) {
+            const input = this.getMorseInput(duration);
+            this.comboInput += input;
+            if (this.comboInput === this.comboMorse) {
+                this.endCombo();
+            } else if (!this.comboMorse.startsWith(this.comboInput)) {
+                // Clear input if it's incorrect
+                this.comboInput = '';
+            }
+        }
+    }
+
+    getMorseInput(duration) {
+        return duration < gameConfig.game.comboInputThreshold ? '.' : '-';
+    }
+
+    startCombo() {
+        const letters = Object.keys(gameConfig.morse);
+        this.comboLetter = letters[Math.floor(Math.random() * letters.length)];
+        this.comboMorse = gameConfig.morse[this.comboLetter];
+        this.comboInput = '';
+        this.comboActive = true;
+        this.comboStartTime = Date.now();
+        gameConfig.game.comboInputStartTime = Date.now(); // Update this line
+        this.isPaused = true;
+    }
+
+    endCombo() {
+        this.isPaused = false;
+        if (this.comboInput === this.comboMorse) {
+            this.comboSuccess();
+        } else {
+            this.comboFail();
+        }
+        this.comboActive = false;
+        this.comboInput = '';
+    }
+
+    comboSuccess() {
+        this.comboEnergyPreservationEndTime = Date.now() + gameConfig.game.comboDuration;
+        // Maybe add some visual/audio feedback for success
+    }
+
+    comboFail() {
+        // Maybe add some visual/audio feedback for failure
     }
 }
