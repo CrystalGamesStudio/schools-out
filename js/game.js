@@ -291,20 +291,6 @@ export default class Game {
 
         if (newLevel !== this.level) {
             this.level = newLevel;
-            this.character.setLevel(this.level);
-        }
-    }
-
-    handleComboInput(duration) {
-        if (this.comboActive) {
-            const input = this.getMorseInput(duration);
-            this.comboInput += input;
-            if (this.comboInput === this.comboMorse) {
-                this.endCombo();
-            } else if (!this.comboMorse.startsWith(this.comboInput)) {
-                // Clear input if it's incorrect
-                this.comboInput = '';
-            }
         }
     }
 
@@ -319,7 +305,6 @@ export default class Game {
         this.comboInput = '';
         this.comboActive = true;
         this.comboStartTime = Date.now();
-        console.log('Combo started:', this.comboLetter, this.comboMorse);
         this.ui.renderCombo(this.comboLetter, this.comboMorse, this.comboInput, 0);
     }
 
@@ -327,26 +312,18 @@ export default class Game {
         this.comboActive = false;
         this.ui.hideCombo();
         this.lastComboEndTime = Date.now(); // Set the last combo end time
-        console.log('Combo ended');
     }
 
     comboSuccess() {
-        console.log('Combo successful');
         this.comboEnergyPreservationEndTime = Date.now() + gameConfig.game.comboDuration;
         this.audio.play('comboSuccess'); // Assuming you have a success sound
     }
 
-    comboFail() {
-        // Maybe add some visual/audio feedback for failure
-    }
-
     startAgain() {
-        console.log('Start Again clicked');
         this.resetGame();
     }
 
     selectCharacter() {
-        console.log('Select Character clicked');
         this.showCharacterSelection();
     }
 
@@ -357,13 +334,13 @@ export default class Game {
             const duration = Date.now() - this.morseInputStartTime;
             const input = this.getMorseInput(duration);
             this.comboInput += input;
-            console.log('Morse input:', input, 'Current combo:', this.comboInput);
             
             if (this.comboInput === this.comboMorse) {
                 console.log('Correct Morse code entered');
                 this.comboSuccess();
                 this.endCombo();
-                this.ui.hideCombo(); // Add this line to hide the combo screen
+                this.ui.hideCombo(); 
+                this.ui.showCorrectComboFeedback();
             } else if (!this.comboMorse.startsWith(this.comboInput)) {
                 console.log('Incorrect Morse code, resetting input');
                 this.comboInput = '';

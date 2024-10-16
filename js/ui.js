@@ -191,8 +191,6 @@ export default class UI {
         if (timeElement) timeElement.textContent = `${remainingTime.toFixed(1)}s`;
         
         this.renderComboVisualization(morse, input);
-        
-        console.log('Combo template rendered:', {letter, morse, input, remainingTime});
     }
 
     renderComboVisualization(morse, input) {
@@ -207,6 +205,26 @@ export default class UI {
             span.textContent = morse[i];
             span.className = i < input.length ? 'correct' : 'pending';
             visualization.appendChild(span);
+        }
+    }
+
+    showCorrectComboFeedback() {
+        const correctComboTemplate = window.uiTemplates.get('correct-combo-template');
+        if (correctComboTemplate) {
+            const correctComboElement = correctComboTemplate.cloneNode(true);
+            this.uiOverlay.appendChild(correctComboElement);
+            setTimeout(() => {
+                this.hideCorrectComboFeedback();
+            }, gameConfig.game.correctComboFeedbackDuration);
+        } else {
+            console.error('Correct combo template not found');
+        }
+    }
+
+    hideCorrectComboFeedback() {
+        const correctComboElement = this.uiOverlay.querySelector('.combo-feedback');
+        if (correctComboElement) {
+            this.uiOverlay.removeChild(correctComboElement);
         }
     }
 

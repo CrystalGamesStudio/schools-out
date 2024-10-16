@@ -105,6 +105,7 @@ export default {
     "comboInputTimeout": 10000,
     "comboInputStartTime": 0,
     "comboInputThreshold": 200, // milliseconds to differentiate between dot and dash
+    "correctComboFeedbackDuration": 1000, // 1 seconds duration for correct combo feedback
     "lastInputTime": 0,
     "comboCooldown": 5000, // 5 seconds cooldown between combos
   },

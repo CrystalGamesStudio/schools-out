@@ -15,7 +15,6 @@ export default class Character extends SvgRenderer {
         this.energy = this.maxEnergy;
         this.energyConsumptionRate = gameConfig.game.energyConsumptionRate;
         this.energyRefillRate = gameConfig.game.energyRefillRate;
-        this.level = 1;
     }
 
     update() {
@@ -53,10 +52,6 @@ export default class Character extends SvgRenderer {
 
     getEnergyPercentage() {
         return (this.energy / this.maxEnergy) * 100;
-    }
-
-    setLevel(level) {
-        this.level = level;
     }
 
     isOnGround() {

@@ -262,3 +262,28 @@ body {
     font-size: 14px;
     font-weight: bold;
 }
+.combo-feedback {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    z-index: 1000;
+    font-family: Arial, sans-serif;
+}
+
+.combo-feedback.correct {
+    background-color: rgba(0, 128, 0, 0.8);
+    color: white;
+}
+
+.combo-feedback h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.combo-feedback p {
+    font-size: 16px;
+}
