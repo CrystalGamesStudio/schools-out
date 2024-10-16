@@ -1,0 +1,64 @@
+<template id="score-template">
+  <div class="ui-element score">
+    <span class="label">Score:</span>
+    <span class="value" id="score-value"></span>
+  </div>
+</template>
+
+<template id="energy-bar-template">
+  <div class="ui-element energy-bar">
+    <div class="label">Energy</div>
+    <div class="bar">
+      <div class="fill" id="energy-fill"></div>
+    </div>
+    <span class="value" id="energy-value"></span>
+  </div>
+</template>
+
+<template id="obstacles-jumped-template">
+  <div class="ui-element obstacles-jumped">
+    <span class="label">Obstacles Jumped:</span>
+    <span class="value" id="obstacles-jumped-value"></span>
+  </div>
+</template>
+
+<template id="level-template">
+  <div class="ui-element level">
+    <span class="label">Level:</span>
+    <span class="value" id="level-value"></span>
+  </div>
+</template>
+
+<template id="game-over-template">
+  <div class="game-over">
+    <h2>Game Over</h2>
+    <p>Final Score: <span id="final-score"></span></p>
+    <p>Obstacles Jumped: <span id="final-obstacles-jumped"></span></p>
+    <p>Level: <span id="final-level"></span></p>
+    <div id="game-over-buttons"></div>
+  </div>
+</template>
+
+<template id="character-selection-template">
+  <div class="character-selection">
+    <h2>Choose Your Character</h2>
+    <div id="character-options"></div>
+  </div>
+</template>
+
+<template id="combo-template">
+  <div class="combo">
+    <p>Enter Morse code for: <span id="combo-letter"></span></p>
+    <p>Morse code: <span id="combo-morse"></span></p>
+    <p>Your input: <span id="combo-input"></span></p>
+    <p>Time remaining: <span id="combo-time"></span></p>
+    <div id="combo-visualization"></div>
+  </div>
+</template>
+
+<template id="correct-combo-template">
+  <div class="combo-feedback correct">
+    <h2>Correct!</h2>
+    <p>Great job on the Morse code!</p>
+  </div>
+</template>

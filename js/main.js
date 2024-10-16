@@ -7,13 +7,6 @@ class Main {
 
     init() {
         this.game.init();
-        this.gameLoop();
-    }
-
-    gameLoop() {
-        this.game.update();
-        this.game.render();
-        requestAnimationFrame(() => this.gameLoop());
     }
 }
 

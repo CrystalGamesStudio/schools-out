@@ -16,10 +16,10 @@ body {
 }
 
 #game-canvas {
-    border: 1px solid black;
     position: absolute;
     top: 0;
     left: 0;
+    z-index: 1;
 }
 
 #ui-overlay {
@@ -28,19 +28,153 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
+    z-index: 2;
     pointer-events: none;
 }
 
-#game-over {
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+.ui-element {
+    position: absolute;
+    pointer-events: auto;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Ensure other UI elements are visible */
+.score, .energy-bar, .obstacles-jumped, .level {
+    z-index: 3;
+}
+
+/* Make game over and character selection screens clickable */
+.game-over, .character-selection {
+    pointer-events: auto;
+}
+
+.score {
+    top: 10px;
+    left: 10px;
+    color: white;
+    font-size: 18px;
+    text-shadow: 2px 2px 2px rgba(0,0,0,0.5);
+}
+
+.energy-bar {
+    position: absolute;
+    top: 60px;
+    right: 10px;
+    width: 150px;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.energy-bar .label {
+    color: white;
+    font-size: 14px;
+    margin-bottom: 2px;
+}
+
+.energy-bar .bar {
+    width: 100%;
+    height: 15px;
+    background-color: #333;
+    border-radius: 7px;
+    overflow: hidden;
+}
+
+.energy-bar .fill {
+    height: 100%;
+    background-color: #4CAF50;
+    transition: width 0.3s ease;
+}
+
+.energy-bar .value {
+    color: white;
+    font-size: 12px;
+    margin-top: 2px;
+    text-align: right;
+}
+
+.obstacles-jumped {
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.level {
+    top: 10px;
+    right: 10px;
+}
+
+.game-over, .character-selection, .combo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     background-color: rgba(0, 0, 0, 0.8);
+    color: white;
     padding: 20px;
     border-radius: 10px;
     text-align: center;
+}
+
+.game-over button, .character-selection button {
+    margin: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #4CAF50;
     color: white;
+    border: none;
+    border-radius: 5px;
+    display: inline-block;
+}
+
+.game-over button:hover, .character-selection button:hover {
+    background-color: #45a049;
+}
+
+.combo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    z-index: 1000;
+    font-size: 18px;
+}
+
+.combo p {
+    margin: 10px 0;
+}
+
+#combo-visualization {
+    margin-top: 15px;
+}
+
+#combo-visualization span {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin: 0 5px;
+    border-radius: 50%;
+    background-color: #333;
+}
+
+#combo-visualization .correct {
+    background-color: #4CAF50;
+}
+
+#combo-visualization .pending {
+    background-color: #FFF;
 }
 
 #final-score {
@@ -85,4 +219,71 @@ body {
 
 #select-character:hover {
     background-color: #2980b9;
+}
+
+.game-over {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    z-index: 1000;
+}
+
+.character-button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin: 10px;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border: 2px solid #333;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+.character-button:hover {
+    transform: scale(1.05);
+}
+
+.character-button svg {
+    width: 30px;
+    height: 45px;
+    margin-right: 10px;
+}
+
+.character-button span {
+    font-size: 14px;
+    font-weight: bold;
+}
+.combo-feedback {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    z-index: 1000;
+    font-family: Arial, sans-serif;
+}
+
+.combo-feedback.correct {
+    background-color: rgba(0, 128, 0, 0.8);
+    color: white;
+}
+
+.combo-feedback h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.combo-feedback p {
+    font-size: 16px;
 }
