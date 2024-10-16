@@ -43,7 +43,6 @@ export default class GameAudio {
     }
 
     mute() {
-        console.log('GameAudio: muting'); // Add this line
         this.isMuted = true;
         Object.values(this.sounds).forEach(sound => {
             sound.muted = true;
@@ -51,7 +50,6 @@ export default class GameAudio {
     }
 
     unmute() {
-        console.log('GameAudio: unmuting'); // Add this line
         this.isMuted = false;
         Object.values(this.sounds).forEach(sound => {
             sound.muted = false;

@@ -6,7 +6,6 @@ import gameConfig from './game-config.js';
 
 export default class Game {
     constructor() {
-        console.log('Game constructor called');
         this.canvas = document.getElementById('game-canvas');
         this.ctx = this.canvas.getContext('2d');
         this.character = null;
@@ -41,7 +40,6 @@ export default class Game {
     }
 
     async init() {
-        console.log('Game init method called');
         if (!window.uiTemplates) {
             console.error('UI templates not loaded. Make sure ui-templates.js is included and loaded properly.');
             return;
@@ -50,19 +48,15 @@ export default class Game {
         this.canvas.width = gameConfig.canvas.width;
         this.canvas.height = gameConfig.canvas.height;
         this.addKeyListeners();
-        console.log('Calling UI init');
         this.ui.init();
         this.ui.startAgain = () => {
-            console.log('Start Again triggered in Game');
             this.resetGame();
         };
         this.ui.selectCharacter = () => {
-            console.log('Select Character triggered in Game');
             this.showCharacterSelection();
         };
         this.ui.onJump = () => this.handleJump();
         this.ui.onCharacterSelect = (type) => this.startGameWithCharacter(type);
-        console.log('Showing character selection');
         this.showCharacterSelection();
     }
 
@@ -96,7 +90,6 @@ export default class Game {
     }
 
     showCharacterSelection() {
-        console.log('Showing character selection');
         this.ui.hideGameOverScreen();
         this.isCharacterSelectionActive = true;
         this.isGameStarted = false;
@@ -113,8 +106,7 @@ export default class Game {
     }
 
     resetGame() {
-        console.log('Resetting game');
-        this.ui.hideGameOverScreen(); // Add this line
+        this.ui.hideGameOverScreen();
         if (!this.selectedCharacterType) {
             this.showCharacterSelection();
             return;
@@ -136,7 +128,6 @@ export default class Game {
     }
 
     gameLoop() {
-        console.log('Game loop iteration');
         if (!this.isGameOver) {
             this.update();
             this.render();
@@ -147,7 +138,6 @@ export default class Game {
     }
 
     handleGameOver() {
-        console.log('Handling game over');
         cancelAnimationFrame(this.animationFrameId);
         this.ui.renderGameOverScreen(this.score, this.obstaclesJumped, this.level);
     }
@@ -160,7 +150,6 @@ export default class Game {
     }
 
     update() {
-        console.log('Game update called');
         if (!this.isGameStarted || this.isGameOver) return;
 
         if (this.comboActive) {
@@ -233,7 +222,6 @@ export default class Game {
     }
 
     render() {
-        console.log('Game render called');
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         
         // Draw the ground
@@ -345,7 +333,6 @@ export default class Game {
     comboSuccess() {
         console.log('Combo successful');
         this.comboEnergyPreservationEndTime = Date.now() + gameConfig.game.comboDuration;
-        // Add visual/audio feedback for success
         this.audio.play('comboSuccess'); // Assuming you have a success sound
     }
 
