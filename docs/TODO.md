@@ -6,3 +6,5 @@
 6. [x] Add character selection
 7. [ ] Add pause menu
 8. [x] Add combo system (morse code generated)
+9. [ ] Longer break between combos
+10. [x] Mobile bug fixes

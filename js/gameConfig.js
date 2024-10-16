@@ -8,37 +8,60 @@ export default {
     "student": {
       "width": 40,
       "height": 60,
-      "color": "#FFD700",
-      "fontColor": "#000000",
-      "jumpStrength": -10
+      "jumpStrength": -10,
+      "svg": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 60">
+        <rect x="10" y="0" width="20" height="20" fill="#FFD700"/>
+        <rect x="0" y="20" width="40" height="40" fill="#4169E1"/>
+        <rect x="5" y="50" width="10" height="10" fill="#000"/>
+        <rect x="25" y="50" width="10" height="10" fill="#000"/>
+      </svg>`
     },
     "nerd": {
       "width": 35,
       "height": 55,
-      "color": "#4B0082",
-      "fontColor": "#FFFFFF",
-      "jumpStrength": -9
+      "jumpStrength": -9,
+      "svg": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 35 55">
+        <rect x="7.5" y="0" width="20" height="20" fill="#A52A2A"/>
+        <rect x="0" y="20" width="35" height="35" fill="#32CD32"/>
+        <rect x="5" y="45" width="8" height="10" fill="#000"/>
+        <rect x="22" y="45" width="8" height="10" fill="#000"/>
+        <rect x="7.5" y="10" width="20" height="5" fill="#000"/>
+      </svg>`
     },
     "athlete": {
       "width": 45,
       "height": 65,
-      "color": "#FF4500",
-      "fontColor": "#FFFFFF",
-      "jumpStrength": -11
+      "jumpStrength": -11,
+      "svg": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 65">
+        <rect x="12.5" y="0" width="20" height="20" fill="#FFA500"/>
+        <rect x="0" y="20" width="45" height="45" fill="#FF4500"/>
+        <rect x="5" y="55" width="12" height="10" fill="#000"/>
+        <rect x="28" y="55" width="12" height="10" fill="#000"/>
+      </svg>`
     },
     "artist": {
       "width": 38,
       "height": 58,
-      "color": "#8A2BE2",
-      "fontColor": "#FFFFFF",
-      "jumpStrength": -9.5
+      "jumpStrength": -9.5,
+      "svg": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 58">
+        <rect x="9" y="0" width="20" height="20" fill="#8A2BE2"/>
+        <rect x="0" y="20" width="38" height="38" fill="#9370DB"/>
+        <rect x="5" y="48" width="10" height="10" fill="#000"/>
+        <rect x="23" y="48" width="10" height="10" fill="#000"/>
+        <circle cx="19" cy="10" r="5" fill="#FF69B4"/>
+      </svg>`
     },
     "rebel": {
       "width": 42,
       "height": 62,
-      "color": "#000000",
-      "fontColor": "#FFFFFF",
-      "jumpStrength": -10.5
+      "jumpStrength": -10.5,
+      "svg": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 42 62">
+        <rect x="11" y="0" width="20" height="20" fill="#000"/>
+        <rect x="0" y="20" width="42" height="42" fill="#8B0000"/>
+        <rect x="5" y="52" width="11" height="10" fill="#000"/>
+        <rect x="26" y="52" width="11" height="10" fill="#000"/>
+        <path d="M11 15 L21 5 L31 15" fill="none" stroke="#FFF" stroke-width="2"/>
+      </svg>`
     }
   },
   "gameOverButtons": {
@@ -82,7 +105,8 @@ export default {
     "comboInputTimeout": 10000,
     "comboInputStartTime": 0,
     "comboInputThreshold": 200, // milliseconds to differentiate between dot and dash
-    "lastInputTime": 0
+    "lastInputTime": 0,
+    "comboCooldown": 5000, // 5 seconds cooldown between combos
   },
   "obstacle": {
     "speed": 5,
@@ -90,17 +114,33 @@ export default {
     "alarm_clock": {
       "width": 40,
       "height": 40,
-      "color": "#FF4136"
+      "svg": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+        <circle cx="20" cy="20" r="18" fill="#FF4136" stroke="#000" stroke-width="2"/>
+        <line x1="20" y1="20" x2="20" y2="8" stroke="#000" stroke-width="2"/>
+        <line x1="20" y1="20" x2="28" y2="20" stroke="#000" stroke-width="2"/>
+        <circle cx="20" cy="20" r="2" fill="#000"/>
+      </svg>`
     },
     "book": {
       "width": 50,
       "height": 30,
-      "color": "#0074D9"
+      "svg": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 30">
+        <rect width="50" height="30" fill="#0074D9"/>
+        <rect x="5" y="5" width="40" height="20" fill="#FFF"/>
+        <line x1="10" y1="10" x2="40" y2="10" stroke="#000" stroke-width="2"/>
+        <line x1="10" y1="15" x2="40" y2="15" stroke="#000" stroke-width="2"/>
+        <line x1="10" y1="20" x2="30" y2="20" stroke="#000" stroke-width="2"/>
+      </svg>`
     },
     "pencil_case": {
       "width": 60,
       "height": 20,
-      "color": "#2ECC40"
+      "svg": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 20">
+        <rect width="60" height="20" rx="5" ry="5" fill="#2ECC40"/>
+        <rect x="5" y="5" width="50" height="10" rx="2" ry="2" fill="#FFF"/>
+        <circle cx="15" cy="10" r="3" fill="#FF4136"/>
+        <rect x="25" y="7" width="20" height="6" fill="#0074D9"/>
+      </svg>`
     }
   },
   "ui": {

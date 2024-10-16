@@ -1,12 +1,11 @@
 import gameConfig from './gameConfig.js';
+import SvgRenderer from './SvgRenderer.js';
 
-export default class Character {
+export default class Character extends SvgRenderer {
     constructor(canvasHeight, groundY, characterConfig) {
+        super(characterConfig.svg, characterConfig.width, characterConfig.height);
         this.x = gameConfig.game.startX;
         this.y = groundY - characterConfig.height;
-        this.width = characterConfig.width;
-        this.height = characterConfig.height;
-        this.color = characterConfig.color;
         this.velocity = 0;
         this.gravity = gameConfig.game.gravity;
         this.jumpStrength = characterConfig.jumpStrength;
@@ -42,15 +41,7 @@ export default class Character {
     }
 
     render(ctx) {
-        ctx.fillStyle = this.color;
-        ctx.fillRect(this.x, this.y, this.width, this.height);
-
-        // Render level inside the character
-        ctx.fillStyle = 'white';
-        ctx.font = 'bold 16px Arial';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(this.level.toString(), this.x + this.width / 2, this.y + this.height / 2);
+        super.render(ctx, this.x, this.y);
     }
 
     jump() {

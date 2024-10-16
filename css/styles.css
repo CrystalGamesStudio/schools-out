@@ -233,3 +233,32 @@ body {
     text-align: center;
     z-index: 1000;
 }
+
+.character-button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin: 10px;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border: 2px solid #333;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+.character-button:hover {
+    transform: scale(1.05);
+}
+
+.character-button svg {
+    width: 30px;
+    height: 45px;
+    margin-right: 10px;
+}
+
+.character-button span {
+    font-size: 14px;
+    font-weight: bold;
+}

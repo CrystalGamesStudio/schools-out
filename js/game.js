@@ -37,6 +37,7 @@ export default class Game {
         this.comboEnergyPreservationEndTime = 0;
         this.isPaused = false;
         this.animationFrameId = null;
+        this.lastComboEndTime = 0;
     }
 
     async init() {
@@ -198,7 +199,11 @@ export default class Game {
             this.audio.play('gameOver');
         }
 
-        if (!this.character.isOnGround() && !this.comboActive && Math.random() < gameConfig.game.comboChance) {
+        // Check if we can start a new combo
+        if (!this.character.isOnGround() && 
+            !this.comboActive && 
+            Math.random() < gameConfig.game.comboChance &&
+            Date.now() - this.lastComboEndTime > gameConfig.game.comboCooldown) {
             this.startCombo();
         }
 
@@ -333,6 +338,7 @@ export default class Game {
     endCombo() {
         this.comboActive = false;
         this.ui.hideCombo();
+        this.lastComboEndTime = Date.now(); // Set the last combo end time
         console.log('Combo ended');
     }
 

@@ -2,7 +2,6 @@ import gameConfig from './gameConfig.js';
 
 export default class UI {
     constructor(canvas, isMobile) {
-        console.log('UI constructor called');
         this.canvas = canvas;
         this.ctx = this.canvas.getContext('2d');
         this.isMobile = isMobile;
@@ -11,7 +10,6 @@ export default class UI {
     }
 
     init() {
-        console.log('UI init method called');
         this.uiOverlay.innerHTML = ''; // Clear any existing content
         this.renderScoreTemplate();
         this.renderEnergyBarTemplate();
@@ -23,17 +21,12 @@ export default class UI {
     }
 
     renderScoreTemplate() {
-        console.log('Rendering score template');
         const scoreTemplate = window.uiTemplates.get('score-template');
-        console.log('Score template:', scoreTemplate);
         this.uiOverlay.appendChild(scoreTemplate.cloneNode(true));
         this.scoreElement = document.querySelector('.score .value');
-        console.log('Score value element:', this.scoreElement);
-        console.log('UI overlay contents:', this.uiOverlay.innerHTML);
     }
 
     renderEnergyBarTemplate() {
-        console.log('Rendering energy bar template');
         const energyBarTemplate = window.uiTemplates.get('energy-bar-template');
         this.uiOverlay.appendChild(energyBarTemplate.cloneNode(true));
         this.energyBar = document.querySelector('.energy-bar');
@@ -42,38 +35,43 @@ export default class UI {
     }
 
     renderObstaclesJumpedTemplate() {
-        console.log('Rendering obstacles jumped template');
         const obstaclesJumpedTemplate = window.uiTemplates.get('obstacles-jumped-template');
         this.uiOverlay.appendChild(obstaclesJumpedTemplate.cloneNode(true));
         this.obstaclesJumpedElement = document.querySelector('.obstacles-jumped .value');
     }
 
     renderLevelTemplate() {
-        console.log('Rendering level template');
         const levelTemplate = window.uiTemplates.get('level-template');
         this.uiOverlay.appendChild(levelTemplate.cloneNode(true));
         this.levelElement = document.querySelector('.level .value');
     }
 
     renderCharacterSelection() {
-        console.log('Rendering Character Selection screen');
         this.uiOverlay.innerHTML = ''; // Clear previous UI elements
         const characterSelectionTemplate = window.uiTemplates.get('character-selection-template');
         this.uiOverlay.appendChild(characterSelectionTemplate.cloneNode(true));
         const characterOptions = document.getElementById('character-options');
         gameConfig.characters.types.forEach(type => {
             const button = document.createElement('button');
-            button.textContent = type;
-            button.style.backgroundColor = gameConfig.characters[type].color;
-            button.style.color = gameConfig.characters[type].fontColor;
+            button.className = 'character-button';
+            
+            // Create SVG element for the miniature
+            const svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+
+            svgElement.innerHTML = gameConfig.characters[type].svg;
+            
+            button.appendChild(svgElement);
+            
+            const nameSpan = document.createElement('span');
+            nameSpan.textContent = type.charAt(0).toUpperCase() + type.slice(1);
+            button.appendChild(nameSpan);
+            
             button.addEventListener('click', () => {
-                console.log(`Character ${type} selected`);
                 if (this.onCharacterSelect) this.onCharacterSelect(type);
             });
             characterOptions.appendChild(button);
         });
         this.uiOverlay.style.pointerEvents = 'auto'; // Enable pointer events
-        console.log('Character Selection screen rendered');
     }
 
     hideCharacterSelection() {
@@ -94,7 +92,6 @@ export default class UI {
     }
 
     updateEnergyBar(energyPercentage) {
-        console.log('Updating energy bar:', energyPercentage);
         if (this.energyFill && this.energyValue) {
             this.energyFill.style.width = `${energyPercentage}%`;
             this.energyValue.textContent = `${Math.round(energyPercentage)}%`;
@@ -128,7 +125,6 @@ export default class UI {
     }
 
     renderGameOverScreen(score, obstaclesJumped, level) {
-        console.log('Rendering Game Over screen');
         this.uiOverlay.innerHTML = ''; // Clear previous UI elements
         const gameOverTemplate = window.uiTemplates.get('game-over-template');
         this.uiOverlay.appendChild(gameOverTemplate.cloneNode(true));
@@ -154,7 +150,6 @@ export default class UI {
         });
         
         this.uiOverlay.style.pointerEvents = 'auto'; // Enable pointer events
-        console.log('Game Over screen rendered'); // Added console log
     }
 
     hideGameOverScreen() {
@@ -166,7 +161,6 @@ export default class UI {
     }
 
     renderCombo(letter, morse, input, elapsedTime) {
-        console.log('Rendering combo template');
         const comboTemplate = window.uiTemplates.get('combo-template');
         if (!comboTemplate) {
             console.error('Combo template not found');
@@ -222,7 +216,6 @@ export default class UI {
             comboElement.remove();
         }
         this.uiOverlay.style.pointerEvents = 'none'; // Disable pointer events
-        console.log('Combo hidden');
     }
 
     addTouchListeners() {
@@ -232,24 +225,18 @@ export default class UI {
             const rect = this.canvas.getBoundingClientRect();
             const x = touch.clientX - rect.left;
             const y = touch.clientY - rect.top;
-            
-            console.log(`Touch event detected at (${x}, ${y})`);
-            
+
             if (x > this.canvas.width / 2) {
-                console.log('Jump triggered by touch');
                 if (this.onJump) this.onJump();
             }
         });
     }
 
-    // Add these methods to handle game over button clicks
     startAgain() {
-        console.log('Start Again method called in UI');
         if (this.startAgain) this.startAgain();
     }
 
     selectCharacter() {
-        console.log('Select Character method called in UI');
         if (this.selectCharacter) this.selectCharacter();
     }
 }

@@ -1,22 +1,16 @@
 import gameConfig from './gameConfig.js';
+import SvgRenderer from './SvgRenderer.js';
 
-export default class Obstacle {
+export default class Obstacle extends SvgRenderer {
     constructor(canvasWidth, groundY, type) {
+        const obstacleConfig = gameConfig.obstacle[type];
+        super(obstacleConfig.svg, obstacleConfig.width, obstacleConfig.height);
         this.canvasWidth = canvasWidth;
         this.groundY = groundY;
         this.type = type;
         this.speed = gameConfig.obstacle.speed;
-        this.setProperties();
-        this.passed = false;
-    }
-
-    setProperties() {
-        const obstacleConfig = gameConfig.obstacle[this.type];
-        this.width = obstacleConfig.width;
-        this.height = obstacleConfig.height;
-        this.color = obstacleConfig.color;
-        this.x = this.canvasWidth;
-        this.y = this.groundY - this.height;
+        this.x = canvasWidth;
+        this.y = groundY - this.height;
     }
 
     update() {
@@ -24,39 +18,7 @@ export default class Obstacle {
     }
 
     render(ctx) {
-        ctx.fillStyle = this.color;
-        
-        switch (this.type) {
-            case 'alarm_clock':
-                this.drawAlarmClock(ctx);
-                break;
-            case 'book':
-                this.drawBook(ctx);
-                break;
-            case 'pencil_case':
-                this.drawPencilCase(ctx);
-                break;
-        }
-    }
-
-    drawAlarmClock(ctx) {
-        ctx.beginPath();
-        ctx.arc(this.x + this.width / 2, this.y + this.height / 2, this.width / 2, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.strokeStyle = 'black';
-        ctx.stroke();
-    }
-
-    drawBook(ctx) {
-        ctx.fillRect(this.x, this.y, this.width, this.height);
-        ctx.strokeStyle = 'black';
-        ctx.strokeRect(this.x, this.y, this.width, this.height);
-    }
-
-    drawPencilCase(ctx) {
-        ctx.fillRect(this.x, this.y, this.width, this.height);
-        ctx.strokeStyle = 'black';
-        ctx.strokeRect(this.x, this.y, this.width, this.height);
+        super.render(ctx, this.x, this.y);
     }
 
     isOffScreen() {
