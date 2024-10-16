@@ -1,4 +1,4 @@
-import gameConfig from './gameConfig.js';
+import gameConfig from './game-config.js';
 
 export default class UI {
     constructor(canvas, isMobile) {

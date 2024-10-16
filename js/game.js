@@ -2,7 +2,7 @@ import Character from './character.js';
 import Obstacle from './obstacle.js';
 import UI from './ui.js';
 import GameAudio from './audio.js';
-import gameConfig from './gameConfig.js';
+import gameConfig from './game-config.js';
 
 export default class Game {
     constructor() {

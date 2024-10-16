@@ -1,5 +1,5 @@
-import gameConfig from './gameConfig.js';
-import SvgRenderer from './SvgRenderer.js';
+import gameConfig from './game-config.js';
+import SvgRenderer from './svg-renderer.js';
 
 export default class Character extends SvgRenderer {
     constructor(canvasHeight, groundY, characterConfig) {
