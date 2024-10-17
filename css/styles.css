@@ -287,3 +287,79 @@ body {
 .combo-feedback p {
     font-size: 16px;
 }
+
+/* Main Menu and How To Play Styles */
+.main-menu,
+.how-to {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    width: 80%;
+    max-width: 400px;
+}
+
+.main-menu h1,
+.how-to h2 {
+    font-size: 36px;
+    margin-bottom: 20px;
+    color: #FFD700; /* Gold color for titles */
+}
+
+.main-menu button,
+.how-to button {
+    display: block;
+    width: 80%;
+    margin: 15px auto;
+    padding: 12px 20px;
+    font-size: 18px;
+    color: white;
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+}
+
+.main-menu button:hover,
+.how-to button:hover {
+    background-color: #45a049;
+}
+
+.main-menu button:active,
+.how-to button:active {
+    transform: scale(0.95);
+}
+
+#how-to-button {
+    background-color: #3498db;
+}
+
+#how-to-button:hover {
+    background-color: #2980b9;
+}
+
+.how-to p {
+    font-size: 16px;
+    line-height: 1.5;
+    margin-bottom: 15px;
+}
+
+#back-to-menu-button {
+    background-color: #e74c3c;
+}
+
+#back-to-menu-button:hover {
+    background-color: #c0392b;
+}
+
+/* Ensure the menu is on top of other elements */
+#ui-overlay {
+    z-index: 1000;
+}
