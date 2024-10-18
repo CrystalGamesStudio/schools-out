@@ -1,10 +1,12 @@
 # 2D Arcade Game: School's Out!
 
-## 🎮 Game Overview
+## Game Overview
 
 "School's Out!" is an exciting 2D side-scrolling arcade game where you play as a student trying to survive the challenges of school life. Jump over obstacles, manage your energy, and complete Morse code combos as you aim for the highest score!
 
-![School's Out! Gameplay](./video/schools_out_1.0.mov)
+## 🎮 GamePlay v0.1
+
+[School's Out! GamePlay](https://github.com/user-attachments/assets/0e32c414-f95e-412d-b6cf-2c049a31929e)
 
 ## 🚀 Features
 
