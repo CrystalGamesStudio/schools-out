@@ -72,13 +72,6 @@ export default class UI {
         });
     }
 
-    hideCharacterSelection() {
-        const characterSelectionElement = this.uiOverlay.querySelector('.character-selection');
-        if (characterSelectionElement) {
-            this.uiOverlay.removeChild(characterSelectionElement);
-        }
-    }
-
     updateScore(score) {
         if (this.scoreElement) {
             this.scoreElement.textContent = score;
@@ -146,13 +139,6 @@ export default class UI {
         });
     }
 
-    hideGameOverScreen() {
-        const gameOverElement = this.uiOverlay.querySelector('.game-over');
-        if (gameOverElement) {
-            this.uiOverlay.removeChild(gameOverElement);
-        }
-    }
-
     renderMainMenu() {
         const mainMenuTemplate = window.uiTemplates.get('main-menu-template');
         this.uiOverlay.appendChild(mainMenuTemplate.cloneNode(true));
@@ -173,20 +159,6 @@ export default class UI {
             mainMenuButtons.appendChild(buttonElement);
         });
         this.uiOverlay.style.pointerEvents = 'auto'; // Enable pointer events
-    }
-
-    hideMainMenu() {
-        const mainMenuElement = this.uiOverlay.querySelector('.main-menu');
-        if (mainMenuElement) {
-            this.uiOverlay.removeChild(mainMenuElement);
-        }
-    }
-
-    renderHowToMenu() {
-        const mainMenuElement = this.uiOverlay.querySelector('.main-menu');
-        if (mainMenuElement) {
-            this.uiOverlay.removeChild(mainMenuElement);
-        }
     }
 
     howToMenu() {
@@ -213,11 +185,31 @@ export default class UI {
         });
     }
 
-    hideHowToMenu() {
-        const howToMenuElement = this.uiOverlay.querySelector('.how-to');
-        if (howToMenuElement) {
-            this.uiOverlay.removeChild(howToMenuElement);
+    removeChild(selector) {
+        const element = this.uiOverlay.querySelector(selector);
+        if (element) {
+            this.uiOverlay.removeChild(element);
         }
+    }
+
+    hideHowToMenu() {
+        this.removeChild('.how-to');
+    }
+
+    renderHowToMenu() {
+        this.removeChild('.main-menu');
+    }
+
+    hideMainMenu() {
+        this.removeChild('.main-menu');
+    }
+
+    hideGameOverScreen() {
+        this.removeChild('.game-over');
+    }
+
+    hideCharacterSelection() {
+        this.removeChild('.character-selection');
     }
 
     backToMenu() {
@@ -239,7 +231,6 @@ export default class UI {
         this.hideGameOverScreen();
         this.renderMainMenu();
     }
-
     renderCombo(letter, morse, input, elapsedTime) {
         const comboTemplate = window.uiTemplates.get('combo-template');
         if (!comboTemplate) {
@@ -308,13 +299,6 @@ export default class UI {
         }
     }
 
-    hideCombo() {
-        const comboElement = this.uiOverlay.querySelector('.combo');
-        if (comboElement) {
-            comboElement.remove();
-        }
-    }
-
     addTouchListeners() {
         this.canvas.addEventListener('touchstart', (e) => {
             e.preventDefault();
@@ -329,31 +313,30 @@ export default class UI {
         });
     }
 
-    hideScore() {
-        const scoreElement = this.uiOverlay.querySelector('.score');
-        if (scoreElement) {
-            scoreElement.remove();
+    removeElement(selector) {
+        const element = this.uiOverlay.querySelector(selector);
+        if (element) {
+            element.remove();
         }
+    }
+
+    hideCombo() {
+        this.removeElement('.combo');
+    }
+
+    hideScore() {
+        this.removeElement('.score');
     }
 
     hideLevel() {
-        const levelElement = this.uiOverlay.querySelector('.level');
-        if (levelElement) {
-            levelElement.remove();
-        }
+        this.removeElement('.level');
     }
 
     hideObstaclesJumped() {
-        const obstaclesJumpedElement = this.uiOverlay.querySelector('.obstacles-jumped');
-        if (obstaclesJumpedElement) {
-            obstaclesJumpedElement.remove();
-        }
+        this.removeElement('.obstacles-jumped');
     }
 
     hideEnergyBar() {
-        const energyBarElement = this.uiOverlay.querySelector('.energy-bar');
-        if (energyBarElement) {
-            energyBarElement.remove();
-        }
+        this.removeElement('.energy-bar');
     }
 }
