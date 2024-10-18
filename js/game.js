@@ -57,7 +57,7 @@ export default class Game {
         };
         this.ui.onJump = () => this.handleJump();
         this.ui.onCharacterSelect = (type) => this.startGameWithCharacter(type);
-        this.showCharacterSelection();
+        this.showMainMenu();
     }
 
     addKeyListeners() {
@@ -87,6 +87,18 @@ export default class Game {
             this.lastJumpTime = currentTime;
             this.audio.play('jump');
         }
+    }
+
+    showMainMenu() {
+        this.ui.hideGameOverScreen();
+        this.ui.hideCharacterSelection();
+        this.ui.hideCombo();
+        this.ui.hideScore();
+        this.ui.hideLevel();
+        this.ui.hideObstaclesJumped();
+        this.ui.hideEnergyBar();
+        this.ui.renderMainMenu();
+        this.isGameStarted = false;
     }
 
     showCharacterSelection() {
@@ -133,14 +145,14 @@ export default class Game {
             this.render();
             this.animationFrameId = requestAnimationFrame(() => this.gameLoop());
         } else {
-            this.handleGameOver();
+            //this.handleGameOver();
         }
     }
 
-    handleGameOver() {
-        cancelAnimationFrame(this.animationFrameId);
-        this.ui.renderGameOverScreen(this.score, this.obstaclesJumped, this.level);
-    }
+    //handleGameOver() {
+    //    cancelAnimationFrame(this.animationFrameId);
+    //    this.ui.renderGameOverScreen(this.score, this.obstaclesJumped, this.level);
+    //}
 
     startGame() {
         this.isGameOver = false;

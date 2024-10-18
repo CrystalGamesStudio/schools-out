@@ -6,7 +6,6 @@ export default class UI {
         this.ctx = this.canvas.getContext('2d');
         this.isMobile = isMobile;
         this.uiOverlay = document.getElementById('ui-overlay');
-        this.characterButtons = [];
     }
 
     init() {
@@ -71,15 +70,6 @@ export default class UI {
             });
             characterOptions.appendChild(button);
         });
-        this.uiOverlay.style.pointerEvents = 'auto'; // Enable pointer events
-    }
-
-    hideCharacterSelection() {
-        const characterSelectionElement = this.uiOverlay.querySelector('.character-selection');
-        if (characterSelectionElement) {
-            this.uiOverlay.removeChild(characterSelectionElement);
-        }
-        this.uiOverlay.style.pointerEvents = 'none'; // Disable pointer events
     }
 
     updateScore(score) {
@@ -121,11 +111,10 @@ export default class UI {
             console.error('Level element not found');
             this.renderLevelTemplate(); // Try to re-render if not found
         }
-        this.uiOverlay.style.pointerEvents = 'none'; // Disable pointer events
     }
 
     renderGameOverScreen(score, obstaclesJumped, level) {
-        this.uiOverlay.innerHTML = ''; // Clear previous UI elements
+        //this.uiOverlay.innerHTML = ''; // Clear previous UI elements
         const gameOverTemplate = window.uiTemplates.get('game-over-template');
         this.uiOverlay.appendChild(gameOverTemplate.cloneNode(true));
         document.getElementById('final-score').textContent = score;
@@ -148,18 +137,100 @@ export default class UI {
             });
             gameOverButtons.appendChild(buttonElement);
         });
-        
+    }
+
+    renderMainMenu() {
+        const mainMenuTemplate = window.uiTemplates.get('main-menu-template');
+        this.uiOverlay.appendChild(mainMenuTemplate.cloneNode(true));
+        const mainMenuButtons = document.getElementById('main-menu-buttons');
+        gameConfig.mainMenuButtons.types.forEach(button => {
+            const buttonElement = document.createElement('button');
+            buttonElement.textContent = gameConfig.mainMenuButtons[button].text;
+            buttonElement.style.backgroundColor = gameConfig.mainMenuButtons[button].color;
+            buttonElement.style.color = gameConfig.mainMenuButtons[button].fontColor;
+            buttonElement.addEventListener('click', () => {
+                console.log(`${button} button clicked`);
+                if (this[gameConfig.mainMenuButtons[button].action]) {
+                    this[gameConfig.mainMenuButtons[button].action]();
+                } else {
+                    console.error(`Action ${gameConfig.mainMenuButtons[button].action} not found`);
+                }
+            });
+            mainMenuButtons.appendChild(buttonElement);
+        });
         this.uiOverlay.style.pointerEvents = 'auto'; // Enable pointer events
     }
 
-    hideGameOverScreen() {
-        const gameOverElement = this.uiOverlay.querySelector('.game-over');
-        if (gameOverElement) {
-            this.uiOverlay.removeChild(gameOverElement);
-        }
-        this.uiOverlay.style.pointerEvents = 'none'; // Disable pointer events
+    howToMenu() {
+        console.log('howToMenu');
+        const howToMenuTemplate = window.uiTemplates.get('how-to-template');
+        this.uiOverlay.appendChild(howToMenuTemplate.cloneNode(true));
+        const howToMenuButtons = document.getElementById('how-to-buttons');
+        
+        gameConfig.howToButtons.types.forEach(button => {
+            const buttonElement = document.createElement('button');
+            buttonElement.textContent = gameConfig.howToButtons[button].text;
+            buttonElement.style.backgroundColor = gameConfig.howToButtons[button].color;
+            buttonElement.style.color = gameConfig.howToButtons[button].fontColor;
+            console.log('howToMenuButtons', howToMenuButtons);
+            buttonElement.addEventListener('click', () => {
+                console.log(`${button} button clicked`);
+                if (this[gameConfig.howToButtons[button].action]) {
+                    this[gameConfig.howToButtons[button].action]();
+                } else {
+                    console.error(`Action ${gameConfig.howToButtons[button].action} not found`);
+                }
+            });
+            howToMenuButtons.appendChild(buttonElement);
+        });
     }
 
+    removeChild(selector) {
+        const element = this.uiOverlay.querySelector(selector);
+        if (element) {
+            this.uiOverlay.removeChild(element);
+        }
+    }
+
+    hideHowToMenu() {
+        this.removeChild('.how-to');
+    }
+
+    renderHowToMenu() {
+        this.removeChild('.main-menu');
+    }
+
+    hideMainMenu() {
+        this.removeChild('.main-menu');
+    }
+
+    hideGameOverScreen() {
+        this.removeChild('.game-over');
+    }
+
+    hideCharacterSelection() {
+        this.removeChild('.character-selection');
+    }
+
+    backToMenu() {
+        this.hideHowToMenu();
+        this.renderMainMenu();
+    }
+
+    startGame() {
+        this.renderCharacterSelection();
+    }
+
+    howToPlay() {
+        this.hideMainMenu();
+        this.howToMenu();
+    }
+
+    mainMenu() {
+        this.hideCharacterSelection();
+        this.hideGameOverScreen();
+        this.renderMainMenu();
+    }
     renderCombo(letter, morse, input, elapsedTime) {
         const comboTemplate = window.uiTemplates.get('combo-template');
         if (!comboTemplate) {
@@ -228,14 +299,6 @@ export default class UI {
         }
     }
 
-    hideCombo() {
-        const comboElement = this.uiOverlay.querySelector('.combo');
-        if (comboElement) {
-            comboElement.remove();
-        }
-        this.uiOverlay.style.pointerEvents = 'none'; // Disable pointer events
-    }
-
     addTouchListeners() {
         this.canvas.addEventListener('touchstart', (e) => {
             e.preventDefault();
@@ -250,11 +313,30 @@ export default class UI {
         });
     }
 
-    startAgain() {
-        if (this.startAgain) this.startAgain();
+    removeElement(selector) {
+        const element = this.uiOverlay.querySelector(selector);
+        if (element) {
+            element.remove();
+        }
     }
 
-    selectCharacter() {
-        if (this.selectCharacter) this.selectCharacter();
+    hideCombo() {
+        this.removeElement('.combo');
+    }
+
+    hideScore() {
+        this.removeElement('.score');
+    }
+
+    hideLevel() {
+        this.removeElement('.level');
+    }
+
+    hideObstaclesJumped() {
+        this.removeElement('.obstacles-jumped');
+    }
+
+    hideEnergyBar() {
+        this.removeElement('.energy-bar');
     }
 }
