@@ -65,7 +65,7 @@ export default {
     }
   },
   "gameOverButtons": {
-    "types": ["startAgain", "selectCharacter"],
+    "types": ["startAgain", "selectCharacter", "mainMenu"],
     "startAgain": {
       "text": "Start Again",
       "action": "startAgain",
@@ -76,6 +76,36 @@ export default {
       "text": "Select Character",
       "action": "selectCharacter",
       "color": "#4B0082",
+      "fontColor": "#FFFFFF"
+    },
+    "mainMenu": {
+      "text": "Main Menu",
+      "action": "mainMenu",
+      "color": "#2196F3",
+      "fontColor": "#FFFFFF"
+    }
+  },
+  "mainMenuButtons": {
+    "types": ["startGame", "howToPlay"],
+    "startGame": {
+      "text": "Start Game",
+      "action": "startGame",
+      "color": "#4CAF50",
+      "fontColor": "#FFFFFF"
+    },
+    "howToPlay": {
+      "text": "How to Play",
+      "action": "howToPlay",
+      "color": "#2196F3",
+      "fontColor": "#FFFFFF"
+    }
+  },
+  "howToButtons": {
+    "types": ["backToMenu"],
+    "backToMenu": {
+      "text": "Back to Menu",
+      "action": "backToMenu",
+      "color": "#2196F3",
       "fontColor": "#FFFFFF"
     }
   },

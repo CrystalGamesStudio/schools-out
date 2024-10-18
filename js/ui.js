@@ -6,7 +6,6 @@ export default class UI {
         this.ctx = this.canvas.getContext('2d');
         this.isMobile = isMobile;
         this.uiOverlay = document.getElementById('ui-overlay');
-        this.characterButtons = [];
     }
 
     init() {
@@ -71,7 +70,6 @@ export default class UI {
             });
             characterOptions.appendChild(button);
         });
-        this.uiOverlay.style.pointerEvents = 'auto'; // Enable pointer events
     }
 
     hideCharacterSelection() {
@@ -79,7 +77,6 @@ export default class UI {
         if (characterSelectionElement) {
             this.uiOverlay.removeChild(characterSelectionElement);
         }
-        this.uiOverlay.style.pointerEvents = 'none'; // Disable pointer events
     }
 
     updateScore(score) {
@@ -121,11 +118,10 @@ export default class UI {
             console.error('Level element not found');
             this.renderLevelTemplate(); // Try to re-render if not found
         }
-        this.uiOverlay.style.pointerEvents = 'none'; // Disable pointer events
     }
 
     renderGameOverScreen(score, obstaclesJumped, level) {
-        this.uiOverlay.innerHTML = ''; // Clear previous UI elements
+        //this.uiOverlay.innerHTML = ''; // Clear previous UI elements
         const gameOverTemplate = window.uiTemplates.get('game-over-template');
         this.uiOverlay.appendChild(gameOverTemplate.cloneNode(true));
         document.getElementById('final-score').textContent = score;
@@ -148,8 +144,6 @@ export default class UI {
             });
             gameOverButtons.appendChild(buttonElement);
         });
-        
-        this.uiOverlay.style.pointerEvents = 'auto'; // Enable pointer events
     }
 
     hideGameOverScreen() {
@@ -157,7 +151,93 @@ export default class UI {
         if (gameOverElement) {
             this.uiOverlay.removeChild(gameOverElement);
         }
-        this.uiOverlay.style.pointerEvents = 'none'; // Disable pointer events
+    }
+
+    renderMainMenu() {
+        const mainMenuTemplate = window.uiTemplates.get('main-menu-template');
+        this.uiOverlay.appendChild(mainMenuTemplate.cloneNode(true));
+        const mainMenuButtons = document.getElementById('main-menu-buttons');
+        gameConfig.mainMenuButtons.types.forEach(button => {
+            const buttonElement = document.createElement('button');
+            buttonElement.textContent = gameConfig.mainMenuButtons[button].text;
+            buttonElement.style.backgroundColor = gameConfig.mainMenuButtons[button].color;
+            buttonElement.style.color = gameConfig.mainMenuButtons[button].fontColor;
+            buttonElement.addEventListener('click', () => {
+                console.log(`${button} button clicked`);
+                if (this[gameConfig.mainMenuButtons[button].action]) {
+                    this[gameConfig.mainMenuButtons[button].action]();
+                } else {
+                    console.error(`Action ${gameConfig.mainMenuButtons[button].action} not found`);
+                }
+            });
+            mainMenuButtons.appendChild(buttonElement);
+        });
+        this.uiOverlay.style.pointerEvents = 'auto'; // Enable pointer events
+    }
+
+    hideMainMenu() {
+        const mainMenuElement = this.uiOverlay.querySelector('.main-menu');
+        if (mainMenuElement) {
+            this.uiOverlay.removeChild(mainMenuElement);
+        }
+    }
+
+    renderHowToMenu() {
+        const mainMenuElement = this.uiOverlay.querySelector('.main-menu');
+        if (mainMenuElement) {
+            this.uiOverlay.removeChild(mainMenuElement);
+        }
+    }
+
+    howToMenu() {
+        console.log('howToMenu');
+        const howToMenuTemplate = window.uiTemplates.get('how-to-template');
+        this.uiOverlay.appendChild(howToMenuTemplate.cloneNode(true));
+        const howToMenuButtons = document.getElementById('how-to-buttons');
+        
+        gameConfig.howToButtons.types.forEach(button => {
+            const buttonElement = document.createElement('button');
+            buttonElement.textContent = gameConfig.howToButtons[button].text;
+            buttonElement.style.backgroundColor = gameConfig.howToButtons[button].color;
+            buttonElement.style.color = gameConfig.howToButtons[button].fontColor;
+            console.log('howToMenuButtons', howToMenuButtons);
+            buttonElement.addEventListener('click', () => {
+                console.log(`${button} button clicked`);
+                if (this[gameConfig.howToButtons[button].action]) {
+                    this[gameConfig.howToButtons[button].action]();
+                } else {
+                    console.error(`Action ${gameConfig.howToButtons[button].action} not found`);
+                }
+            });
+            howToMenuButtons.appendChild(buttonElement);
+        });
+    }
+
+    hideHowToMenu() {
+        const howToMenuElement = this.uiOverlay.querySelector('.how-to');
+        if (howToMenuElement) {
+            this.uiOverlay.removeChild(howToMenuElement);
+        }
+    }
+
+    backToMenu() {
+        this.hideHowToMenu();
+        this.renderMainMenu();
+    }
+
+    startGame() {
+        this.renderCharacterSelection();
+    }
+
+    howToPlay() {
+        this.hideMainMenu();
+        this.howToMenu();
+    }
+
+    mainMenu() {
+        this.hideCharacterSelection();
+        this.hideGameOverScreen();
+        this.renderMainMenu();
     }
 
     renderCombo(letter, morse, input, elapsedTime) {
@@ -233,7 +313,6 @@ export default class UI {
         if (comboElement) {
             comboElement.remove();
         }
-        this.uiOverlay.style.pointerEvents = 'none'; // Disable pointer events
     }
 
     addTouchListeners() {
@@ -250,11 +329,31 @@ export default class UI {
         });
     }
 
-    startAgain() {
-        if (this.startAgain) this.startAgain();
+    hideScore() {
+        const scoreElement = this.uiOverlay.querySelector('.score');
+        if (scoreElement) {
+            scoreElement.remove();
+        }
     }
 
-    selectCharacter() {
-        if (this.selectCharacter) this.selectCharacter();
+    hideLevel() {
+        const levelElement = this.uiOverlay.querySelector('.level');
+        if (levelElement) {
+            levelElement.remove();
+        }
+    }
+
+    hideObstaclesJumped() {
+        const obstaclesJumpedElement = this.uiOverlay.querySelector('.obstacles-jumped');
+        if (obstaclesJumpedElement) {
+            obstaclesJumpedElement.remove();
+        }
+    }
+
+    hideEnergyBar() {
+        const energyBarElement = this.uiOverlay.querySelector('.energy-bar');
+        if (energyBarElement) {
+            energyBarElement.remove();
+        }
     }
 }

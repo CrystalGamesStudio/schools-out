@@ -351,14 +351,6 @@ body {
     margin-bottom: 15px;
 }
 
-#back-to-menu-button {
-    background-color: #e74c3c;
-}
-
-#back-to-menu-button:hover {
-    background-color: #c0392b;
-}
-
 /* Ensure the menu is on top of other elements */
 #ui-overlay {
     z-index: 1000;
