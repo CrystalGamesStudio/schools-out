@@ -24,4 +24,11 @@ export default class Obstacle extends SvgRenderer {
     isOffScreen() {
         return this.x + this.width < 0;
     }
+
+    updateSize(canvasWidth, groundY) {
+        const scale = canvasWidth / 800; // Original width
+        this.width *= scale;
+        this.height *= scale;
+        this.y = groundY - this.height;
+    }
 }
