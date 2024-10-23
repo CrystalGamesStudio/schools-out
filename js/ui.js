@@ -1,11 +1,12 @@
 import gameConfig from './game-config.js';
 
 export default class UI {
-    constructor(canvas, isMobile) {
+    constructor(canvas, isMobile, game) {
         this.canvas = canvas;
         this.ctx = this.canvas.getContext('2d');
         this.isMobile = isMobile;
         this.uiOverlay = document.getElementById('ui-overlay');
+        this.game = game;
     }
 
     init() {
@@ -128,7 +129,6 @@ export default class UI {
             buttonElement.style.backgroundColor = gameConfig.gameOverButtons[button].color;
             buttonElement.style.color = gameConfig.gameOverButtons[button].fontColor;
             buttonElement.addEventListener('click', () => {
-                console.log(`${button} button clicked`);
                 if (this[gameConfig.gameOverButtons[button].action]) {
                     this[gameConfig.gameOverButtons[button].action]();
                 } else {
@@ -149,7 +149,6 @@ export default class UI {
             buttonElement.style.backgroundColor = gameConfig.mainMenuButtons[button].color;
             buttonElement.style.color = gameConfig.mainMenuButtons[button].fontColor;
             buttonElement.addEventListener('click', () => {
-                console.log(`${button} button clicked`);
                 if (this[gameConfig.mainMenuButtons[button].action]) {
                     this[gameConfig.mainMenuButtons[button].action]();
                 } else {
@@ -174,7 +173,6 @@ export default class UI {
             buttonElement.style.color = gameConfig.howToButtons[button].fontColor;
             console.log('howToMenuButtons', howToMenuButtons);
             buttonElement.addEventListener('click', () => {
-                console.log(`${button} button clicked`);
                 if (this[gameConfig.howToButtons[button].action]) {
                     this[gameConfig.howToButtons[button].action]();
                 } else {
@@ -338,5 +336,51 @@ export default class UI {
 
     hideEnergyBar() {
         this.removeElement('.energy-bar');
+    }
+
+    updateCanvasSize(width, height) {
+        this.canvas.width = width;
+        this.canvas.height = height;
+        if (this.game && this.game.isGameStarted) {
+            this.updateUIElements();
+        }
+    }
+
+    updateUIElements() {
+        // Adjust positions and sizes of UI elements based on new canvas size
+        const scale = this.canvas.width / 800; // Original width
+        
+        // Update score position
+        const scoreElement = document.querySelector('.score');
+        if (scoreElement) {
+            scoreElement.style.fontSize = `${16 * scale}px`;
+            scoreElement.style.top = `${10 * scale}px`;
+            scoreElement.style.left = `${10 * scale}px`;
+        }
+
+        // Update energy bar
+        const energyBar = document.querySelector('.energy-bar');
+        if (energyBar) {
+            energyBar.style.width = `${gameConfig.ui.energyBarWidth * scale}px`;
+            energyBar.style.height = `${gameConfig.ui.energyBarHeight * scale}px`;
+            energyBar.style.top = `${10 * scale}px`;
+            energyBar.style.right = `${10 * scale}px`;
+        }
+
+        // Update other UI elements similarly...
+        // For example:
+        const obstaclesJumpedElement = document.querySelector('.obstacles-jumped');
+        if (obstaclesJumpedElement) {
+            obstaclesJumpedElement.style.fontSize = `${16 * scale}px`;
+            obstaclesJumpedElement.style.top = `${10 * scale}px`;
+            // Adjust position as needed
+        }
+
+        const levelElement = document.querySelector('.level');
+        if (levelElement) {
+            levelElement.style.fontSize = `${16 * scale}px`;
+            levelElement.style.top = `${10 * scale}px`;
+            levelElement.style.right = `${10 * scale}px`;
+        }
     }
 }

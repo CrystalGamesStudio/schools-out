@@ -65,4 +65,12 @@ export default class Character extends SvgRenderer {
     resumeEnergyConsumption() {
         this.energyConsumptionRate = gameConfig.game.energyConsumptionRate;
     }
+
+    updateSize(canvasHeight, groundY) {
+        const scale = canvasHeight / 600; // Original height
+        this.width *= scale;
+        this.height *= scale;
+        this.y = groundY - this.height;
+        this.jumpStrength *= scale;
+    }
 }

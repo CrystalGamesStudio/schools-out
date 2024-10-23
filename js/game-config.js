@@ -1,8 +1,4 @@
 export default {
-  "canvas": {
-    "width": 800,
-    "height": 600
-  },
   "characters": {
     "types": ["student", "nerd", "athlete", "artist", "rebel"],
     "student": {
@@ -111,7 +107,6 @@ export default {
   },
   "game": {
     "groundColor": "#4CAF50",
-    "groundY": 500,
     "jumpCooldown": 150,
     "obstacleSpawnChance": 0.02,
     "gravity": 0.5,

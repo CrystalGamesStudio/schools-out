@@ -17,7 +17,7 @@ export default class Game {
         this.jumpCooldown = gameConfig.game.jumpCooldown;
         this.groundY = gameConfig.game.groundY;
         this.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        this.ui = new UI(this.canvas, this.isMobile);
+        this.ui = new UI(this.canvas, this.isMobile, this);
         this.selectedCharacterType = null;
         this.isGameStarted = false;
         this.isCharacterSelectionActive = true;
@@ -37,6 +37,46 @@ export default class Game {
         this.isPaused = false;
         this.animationFrameId = null;
         this.lastComboEndTime = 0;
+
+        this.resizeCanvas();
+        window.addEventListener('resize', () => this.resizeCanvas());
+
+        this.addKeyListeners();
+        if (this.isMobile) {
+            this.addTouchListeners();
+        }
+    }
+
+    resizeCanvas() {
+        const container = document.getElementById('game-container');
+        const containerWidth = container.clientWidth;
+        const containerHeight = container.clientHeight;
+        const aspectRatio = 4 / 3; // Maintain a 4:3 aspect ratio
+
+        let canvasWidth, canvasHeight;
+
+        if (containerWidth / containerHeight > aspectRatio) {
+            // Container is wider than needed, limit by height
+            canvasHeight = containerHeight;
+            canvasWidth = canvasHeight * aspectRatio;
+        } else {
+            // Container is taller than needed, limit by width
+            canvasWidth = containerWidth;
+            canvasHeight = canvasWidth / aspectRatio;
+        }
+
+        this.canvas.width = canvasWidth;
+        this.canvas.height = canvasHeight;
+
+        // Update game properties that depend on canvas size
+        this.groundY = this.canvas.height * 0.83; // Adjust ground position
+        if (this.character) {
+            this.character.updateSize(this.canvas.height, this.groundY);
+        }
+        this.obstacles.forEach(obstacle => obstacle.updateSize(this.canvas.width, this.groundY));
+
+        // Update UI
+        this.ui.updateCanvasSize(canvasWidth, canvasHeight);
     }
 
     async init() {
@@ -45,9 +85,6 @@ export default class Game {
             return;
         }
         await window.uiTemplates.load();
-        this.canvas.width = gameConfig.canvas.width;
-        this.canvas.height = gameConfig.canvas.height;
-        this.addKeyListeners();
         this.ui.init();
         this.ui.startAgain = () => {
             this.resetGame();
@@ -65,6 +102,7 @@ export default class Game {
             this.keys[e.code] = true;
             if (e.code === 'Space') {
                 e.preventDefault(); // Prevent scrolling when spacebar is pressed
+                this.handleJump();
             }
             if (e.code === 'Enter' && this.comboActive) {
                 e.preventDefault();
@@ -80,9 +118,38 @@ export default class Game {
         });
     }
 
+    addTouchListeners() {
+        this.canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // Prevent default touch behavior
+            const touch = e.touches[0];
+            const x = touch.clientX - this.canvas.offsetLeft;
+            
+            if (x < this.canvas.width / 2) {
+                // Left side of the screen - jump
+                this.handleJump();
+            } else {
+                // Right side of the screen - morse input start
+                if (this.comboActive) {
+                    this.handleMorseInput('start');
+                }
+            }
+        });
+
+        this.canvas.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            const touch = e.changedTouches[0];
+            const x = touch.clientX - this.canvas.offsetLeft;
+            
+            if (x >= this.canvas.width / 2 && this.comboActive) {
+                // Right side of the screen - morse input end
+                this.handleMorseInput('end');
+            }
+        });
+    }
+
     handleJump() {
         const currentTime = Date.now();
-        if (currentTime - this.lastJumpTime > this.jumpCooldown) {
+        if (currentTime - this.lastJumpTime > this.jumpCooldown && this.character) {
             this.character.jump();
             this.lastJumpTime = currentTime;
             this.audio.play('jump');
@@ -148,11 +215,6 @@ export default class Game {
             //this.handleGameOver();
         }
     }
-
-    //handleGameOver() {
-    //    cancelAnimationFrame(this.animationFrameId);
-    //    this.ui.renderGameOverScreen(this.score, this.obstaclesJumped, this.level);
-    //}
 
     startGame() {
         this.isGameOver = false;
@@ -348,13 +410,11 @@ export default class Game {
             this.comboInput += input;
             
             if (this.comboInput === this.comboMorse) {
-                console.log('Correct Morse code entered');
                 this.comboSuccess();
                 this.endCombo();
                 this.ui.hideCombo(); 
                 this.ui.showCorrectComboFeedback();
             } else if (!this.comboMorse.startsWith(this.comboInput)) {
-                console.log('Incorrect Morse code, resetting input');
                 this.comboInput = '';
             }
             
