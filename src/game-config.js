@@ -194,10 +194,10 @@ export default {
     "energyBarLowColor": "red"
   },
   "audio": {
-    "gameOver": "music/game-over.wav",
-    "gameStarts": "music/game-starts.wav",
-    "lowEnergy": "music/low-energy.wav",
-    "jump": "music/jump.wav",
+    "gameOver": "public/music/game-over.wav",
+    "gameStarts": "public/music/game-starts.wav",
+    "lowEnergy": "public/music/low-energy.wav",
+    "jump": "public/music/jump.wav",
     "defaultOn": false
   },
   "morse": {
