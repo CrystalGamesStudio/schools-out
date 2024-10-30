@@ -82,7 +82,6 @@ export default class Game {
 
     async init() {
         if (!window.uiTemplates) {
-            console.error('UI templates not loaded. Make sure ui-templates.js is included and loaded properly.');
             return;
         }
         await window.uiTemplates.load();
@@ -95,13 +94,10 @@ export default class Game {
         };
         this.ui.onJump = () => this.handleJump();
         this.ui.onCharacterSelect = (type) => this.startGameWithCharacter(type);
-        //await authService.signIn('tkowalczyk.poczta@gmail.com', 'password');
-        // Check if user is authenticated
+
         if (authService.isAuthenticated()) {
-            console.log('User is authenticated');
             this.showMainMenu();
         } else {
-            console.log('User is not authenticated');
             this.showLoginScreen();
         }
         
@@ -279,7 +275,6 @@ export default class Game {
 
         // Check if energy has run out
         if (energyPercentage === 0) {
-            console.log('Game Over state triggered');
             this.isGameOver = true;
             this.audio.play('gameOver');
         }

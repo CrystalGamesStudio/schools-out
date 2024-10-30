@@ -78,7 +78,6 @@ export default class UI {
         if (this.scoreElement) {
             this.scoreElement.textContent = score;
         } else {
-            console.error('Score element not found');
             this.renderScoreTemplate(); // Try to re-render if not found
         }
     }
@@ -92,7 +91,6 @@ export default class UI {
                 ? gameConfig.ui.energyBarHighColor 
                 : gameConfig.ui.energyBarLowColor;
         } else {
-            console.error('Energy bar elements not found');
             this.renderEnergyBarTemplate(); // Try to re-render if not found
         }
     }
@@ -101,7 +99,6 @@ export default class UI {
         if (this.obstaclesJumpedElement) {
             this.obstaclesJumpedElement.textContent = obstaclesJumped;
         } else {
-            console.error('Obstacles jumped element not found');
             this.renderObstaclesJumpedTemplate(); // Try to re-render if not found
         }
     }
@@ -110,7 +107,6 @@ export default class UI {
         if (this.levelElement) {
             this.levelElement.textContent = level;
         } else {
-            console.error('Level element not found');
             this.renderLevelTemplate(); // Try to re-render if not found
         }
     }
@@ -184,20 +180,15 @@ export default class UI {
     }
 
     async login() {
-        console.log('login');
         await authService.signIn(document.getElementById('login-email').value, document.getElementById('login-password').value);
 
         if (authService.isAuthenticated()) {
-            console.log('User is authenticated');
             this.hideLoginScreen();
             this.renderMainMenu();
-          } else {
-            console.log('User is not authenticated');
-          }
+        }
     }
 
     howToMenu() {
-        console.log('howToMenu');
         const howToMenuTemplate = window.uiTemplates.get('how-to-template');
         this.uiOverlay.appendChild(howToMenuTemplate.cloneNode(true));
         const howToMenuButtons = document.getElementById('how-to-buttons');
@@ -207,7 +198,6 @@ export default class UI {
             buttonElement.textContent = gameConfig.howToButtons[button].text;
             buttonElement.style.backgroundColor = gameConfig.howToButtons[button].color;
             buttonElement.style.color = gameConfig.howToButtons[button].fontColor;
-            console.log('howToMenuButtons', howToMenuButtons);
             buttonElement.addEventListener('click', () => {
                 if (this[gameConfig.howToButtons[button].action]) {
                     this[gameConfig.howToButtons[button].action]();
@@ -272,7 +262,6 @@ export default class UI {
     renderCombo(letter, morse, input, elapsedTime) {
         const comboTemplate = window.uiTemplates.get('combo-template');
         if (!comboTemplate) {
-            console.error('Combo template not found');
             return;
         }
         
@@ -305,7 +294,6 @@ export default class UI {
     renderComboVisualization(morse, input) {
         const visualization = this.uiOverlay.querySelector('#combo-visualization');
         if (!visualization) {
-            console.error('Combo visualization element not found');
             return;
         }
         visualization.innerHTML = '';
@@ -325,8 +313,6 @@ export default class UI {
             setTimeout(() => {
                 this.hideCorrectComboFeedback();
             }, gameConfig.game.correctComboFeedbackDuration);
-        } else {
-            console.error('Correct combo template not found');
         }
     }
 
