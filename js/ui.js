@@ -1,4 +1,5 @@
 import gameConfig from './game-config.js';
+import authService from './services/auth.js';
 
 export default class UI {
     constructor(canvas, isMobile, game) {
@@ -160,6 +161,41 @@ export default class UI {
         this.uiOverlay.style.pointerEvents = 'auto'; // Enable pointer events
     }
 
+    renderLoginScreen() {
+        const loginScreenTemplate = window.uiTemplates.get('login-screen-template');
+        this.uiOverlay.appendChild(loginScreenTemplate.cloneNode(true));
+        const loginButtons = document.getElementById('login-buttons');
+        gameConfig.loginButtons.types.forEach(button => {
+            const buttonElement = document.createElement('button');
+            buttonElement.textContent = gameConfig.loginButtons[button].text;
+            buttonElement.style.backgroundColor = gameConfig.loginButtons[button].color;
+            buttonElement.style.color = gameConfig.loginButtons[button].fontColor;
+            buttonElement.addEventListener('click', () => {
+                if (this[gameConfig.loginButtons[button].action]) {
+                    this[gameConfig.loginButtons[button].action]();
+                } else {
+                    console.error(`Action ${gameConfig.loginButtons[button].action} not found`);
+                }
+            });
+            loginButtons.appendChild(buttonElement);
+        });
+
+        this.uiOverlay.style.pointerEvents = 'auto'; // Enable pointer events
+    }
+
+    async login() {
+        console.log('login');
+        await authService.signIn(document.getElementById('login-email').value, document.getElementById('login-password').value);
+
+        if (authService.isAuthenticated()) {
+            console.log('User is authenticated');
+            this.hideLoginScreen();
+            this.renderMainMenu();
+          } else {
+            console.log('User is not authenticated');
+          }
+    }
+
     howToMenu() {
         console.log('howToMenu');
         const howToMenuTemplate = window.uiTemplates.get('how-to-template');
@@ -188,6 +224,10 @@ export default class UI {
         if (element) {
             this.uiOverlay.removeChild(element);
         }
+    }
+
+    hideLoginScreen() {
+        this.removeChild('.login-screen');
     }
 
     hideHowToMenu() {

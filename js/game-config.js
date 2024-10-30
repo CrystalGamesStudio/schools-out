@@ -105,6 +105,15 @@ export default {
       "fontColor": "#FFFFFF"
     }
   },
+  "loginButtons": {
+    "types": ["login"],
+    "login": {
+      "text": "Login",
+      "action": "login",
+      "color": "#2196F3",
+      "fontColor": "#FFFFFF"
+    }
+  },
   "game": {
     "groundColor": "#4CAF50",
     "jumpCooldown": 150,
@@ -123,7 +132,14 @@ export default {
       500,   // Level 4
       1000,  // Level 5
       2000,  // Level 6
-      // Add more levels as needed
+      3000,  // Level 7
+      4000,  // Level 8
+      5000,  // Level 9
+      6000,  // Level 10
+      7000,  // Level 11
+      8000,  // Level 12
+      9000,  // Level 13
+      10000,  // Level 14
     ],
     "comboChance": 0.005,
     "comboDuration": 5000,

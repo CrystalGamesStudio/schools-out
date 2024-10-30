@@ -3,6 +3,7 @@ import Obstacle from './obstacle.js';
 import UI from './ui.js';
 import GameAudio from './audio.js';
 import gameConfig from './game-config.js';
+import authService from './services/auth.js';
 
 export default class Game {
     constructor() {
@@ -94,7 +95,16 @@ export default class Game {
         };
         this.ui.onJump = () => this.handleJump();
         this.ui.onCharacterSelect = (type) => this.startGameWithCharacter(type);
-        this.showMainMenu();
+        //await authService.signIn('tkowalczyk.poczta@gmail.com', 'password');
+        // Check if user is authenticated
+        if (authService.isAuthenticated()) {
+            console.log('User is authenticated');
+            this.showMainMenu();
+        } else {
+            console.log('User is not authenticated');
+            this.showLoginScreen();
+        }
+        
     }
 
     addKeyListeners() {
@@ -123,7 +133,7 @@ export default class Game {
             e.preventDefault(); // Prevent default touch behavior
             const touch = e.touches[0];
             const x = touch.clientX - this.canvas.offsetLeft;
-            
+
             if (x < this.canvas.width / 2) {
                 // Left side of the screen - jump
                 this.handleJump();
@@ -139,7 +149,7 @@ export default class Game {
             e.preventDefault();
             const touch = e.changedTouches[0];
             const x = touch.clientX - this.canvas.offsetLeft;
-            
+
             if (x >= this.canvas.width / 2 && this.comboActive) {
                 // Right side of the screen - morse input end
                 this.handleMorseInput('end');
@@ -165,6 +175,18 @@ export default class Game {
         this.ui.hideObstaclesJumped();
         this.ui.hideEnergyBar();
         this.ui.renderMainMenu();
+        this.isGameStarted = false;
+    }
+
+    showLoginScreen() {
+        this.ui.hideGameOverScreen();
+        this.ui.hideCharacterSelection();
+        this.ui.hideCombo();
+        this.ui.hideScore();
+        this.ui.hideLevel();
+        this.ui.hideObstaclesJumped();
+        this.ui.hideEnergyBar();
+        this.ui.renderLoginScreen();
         this.isGameStarted = false;
     }
 
@@ -230,7 +252,7 @@ export default class Game {
             // Only update the combo timer when combo is active
             const elapsedTime = Date.now() - this.comboStartTime;
             this.ui.renderCombo(this.comboLetter, this.comboMorse, this.comboInput, elapsedTime);
-            
+
             if (elapsedTime > gameConfig.game.comboInputTimeout) {
                 this.endCombo();
             }
@@ -263,8 +285,8 @@ export default class Game {
         }
 
         // Check if we can start a new combo
-        if (!this.character.isOnGround() && 
-            !this.comboActive && 
+        if (!this.character.isOnGround() &&
+            !this.comboActive &&
             Math.random() < gameConfig.game.comboChance &&
             Date.now() - this.lastComboEndTime > gameConfig.game.comboCooldown) {
             this.startCombo();
@@ -297,11 +319,11 @@ export default class Game {
 
     render() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        
+
         // Draw the ground
         this.ctx.fillStyle = gameConfig.game.groundColor;
         this.ctx.fillRect(0, this.groundY, this.canvas.width, this.canvas.height - this.groundY);
-        
+
         if (this.isCharacterSelectionActive) {
             // Don't render game elements during character selection
             return;
@@ -408,16 +430,16 @@ export default class Game {
             const duration = Date.now() - this.morseInputStartTime;
             const input = this.getMorseInput(duration);
             this.comboInput += input;
-            
+
             if (this.comboInput === this.comboMorse) {
                 this.comboSuccess();
                 this.endCombo();
-                this.ui.hideCombo(); 
+                this.ui.hideCombo();
                 this.ui.showCorrectComboFeedback();
             } else if (!this.comboMorse.startsWith(this.comboInput)) {
                 this.comboInput = '';
             }
-            
+
             if (this.comboActive) {
                 this.ui.renderCombo(this.comboLetter, this.comboMorse, this.comboInput, Date.now() - this.comboStartTime);
             }
