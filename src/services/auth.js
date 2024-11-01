@@ -74,12 +74,32 @@ class AuthService {
     try {
       const credential = await createUserWithEmailAndPassword(auth, email, password);
       
-      // Create user profile
-      await this.createUserProfile(email);
-      
-      return credential.user;
+      // Create user profile with provided username
+      const userData = {
+        username: username || email.split('@')[0], // Use provided username or default to email
+        coins: 0,
+        createdAt: serverTimestamp(),
+        purchases: [],
+        email: email
+      };
+
+      // Set the user profile
+      await setDoc(doc(db, 'users', credential.user.uid), userData);
+      this.userProfile = userData;
+      this.user = credential.user;
+
+      return {
+        user: credential.user,
+        profile: userData
+      };
     } catch (error) {
       console.error('Sign up error:', error);
+      // Clean up if profile creation fails
+      if (this.user) {
+        await this.user.delete();
+        this.user = null;
+        this.userProfile = null;
+      }
       throw error;
     }
   }
@@ -129,6 +149,11 @@ class AuthService {
     await setDoc(docRef, updates, { merge: true });
     await this.loadUserProfile();
     return this.userProfile;
+  }
+
+  // Add a new helper method to check if user is fully registered
+  isFullyRegistered() {
+    return this.isAuthenticated() && !!this.userProfile;
   }
 }
 

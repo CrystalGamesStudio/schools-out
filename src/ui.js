@@ -128,8 +128,6 @@ export default class UI {
             buttonElement.addEventListener('click', () => {
                 if (this[gameConfig.gameOverButtons[button].action]) {
                     this[gameConfig.gameOverButtons[button].action]();
-                } else {
-                    console.error(`Action ${gameConfig.gameOverButtons[button].action} not found`);
                 }
             });
             gameOverButtons.appendChild(buttonElement);
@@ -148,8 +146,6 @@ export default class UI {
             buttonElement.addEventListener('click', () => {
                 if (this[gameConfig.mainMenuButtons[button].action]) {
                     this[gameConfig.mainMenuButtons[button].action]();
-                } else {
-                    console.error(`Action ${gameConfig.mainMenuButtons[button].action} not found`);
                 }
             });
             mainMenuButtons.appendChild(buttonElement);
@@ -172,8 +168,6 @@ export default class UI {
             buttonElement.addEventListener('click', () => {
                 if (this[gameConfig.loginButtons[button].action]) {
                     this[gameConfig.loginButtons[button].action]();
-                } else {
-                    console.error(`Action ${gameConfig.loginButtons[button].action} not found`);
                 }
             });
             loginButtons.appendChild(buttonElement);
@@ -231,16 +225,19 @@ export default class UI {
     }
 
     async postRegister() {
-        console.log(
-            document.getElementById('register-email').value,
-            document.getElementById('register-password').value
-        );
-        //await authService.signUp(document.getElementById('register-email').value, document.getElementById('register-password').value);
+        await authService.signUp(document.getElementById('register-email').value, document.getElementById('register-password').value);
+
+        if (authService.isFullyRegistered()) {
+            this.hideRegisterScreen();
+            this.renderLoginScreen();
+        }
     }
 
     async postForgotPassword() {
-        console.log(document.getElementById('forgot-password-email').value);
-        //await authService.sendPasswordResetEmail(document.getElementById('forgot-password-email').value);
+        await authService.sendPasswordResetEmail(document.getElementById('forgot-password-email').value);
+
+        this.hideForgotPasswordScreen();
+        this.renderLoginScreen();
     }
 
     howToMenu() {
@@ -256,8 +253,6 @@ export default class UI {
             buttonElement.addEventListener('click', () => {
                 if (this[gameConfig.howToButtons[button].action]) {
                     this[gameConfig.howToButtons[button].action]();
-                } else {
-                    console.error(`Action ${gameConfig.howToButtons[button].action} not found`);
                 }
             });
             howToMenuButtons.appendChild(buttonElement);
@@ -269,6 +264,14 @@ export default class UI {
         if (element) {
             this.uiOverlay.removeChild(element);
         }
+    }
+
+    hideForgotPasswordScreen() {
+        this.removeChild('.forgot-password-screen');
+    }
+
+    hideRegisterScreen() {
+        this.removeChild('.register-screen');
     }
 
     hideLoginScreen() {
