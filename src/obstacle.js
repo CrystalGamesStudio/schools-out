@@ -1,5 +1,5 @@
 import gameConfig from './game-config.js';
-import SvgRenderer from './svg-renderer.js';
+import SvgRenderer from './services/svg-renderer.js';
 
 export default class Obstacle extends SvgRenderer {
     constructor(canvasWidth, groundY, type) {

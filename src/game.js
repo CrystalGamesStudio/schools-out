@@ -1,7 +1,7 @@
 import Character from './character.js';
 import Obstacle from './obstacle.js';
 import UI from './ui.js';
-import GameAudio from './audio.js';
+import GameAudio from './services/audio.js';
 import gameConfig from './game-config.js';
 import authService from './services/auth.js';
 
@@ -100,7 +100,7 @@ export default class Game {
         } else {
             this.showLoginScreen();
         }
-        
+
     }
 
     addKeyListeners() {

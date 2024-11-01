@@ -1,4 +1,4 @@
-import gameConfig from './game-config.js';
+import gameConfig from '../game-config.js';
 
 export default class GameAudio {
     constructor() {

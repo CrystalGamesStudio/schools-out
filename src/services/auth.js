@@ -1,15 +1,15 @@
-import { 
+import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
   onAuthStateChanged,
   signOut
 } from 'firebase/auth';
-import { 
-  doc, 
-  setDoc, 
+import {
+  doc,
+  setDoc,
   getDoc,
-  serverTimestamp 
+  serverTimestamp
 } from 'firebase/firestore';
 import { auth, db } from '../config.js';
 
@@ -39,23 +39,23 @@ class AuthService {
 
   async loadUserProfile() {
     if (!this.user) throw new Error('No user logged in');
-    
+
     const docRef = doc(db, 'users', this.user.uid);
     const docSnap = await getDoc(docRef);
-    
+
     if (!docSnap.exists()) {
       // Create profile if it doesn't exist
       await this.createUserProfile(this.user.email);
       return this.loadUserProfile();
     }
-    
+
     this.userProfile = docSnap.data();
     return this.userProfile;
   }
 
   async createUserProfile(email) {
     if (!this.user) throw new Error('No user logged in');
-    
+
     const username = email.split('@')[0]; // Default username from email
     const userData = {
       username,
@@ -73,7 +73,7 @@ class AuthService {
   async signUp(email, password, username) {
     try {
       const credential = await createUserWithEmailAndPassword(auth, email, password);
-      
+
       // Create user profile with provided username
       const userData = {
         username: username || email.split('@')[0], // Use provided username or default to email
@@ -144,7 +144,7 @@ class AuthService {
 
   async updateUserProfile(updates) {
     if (!this.user) throw new Error('No user logged in');
-    
+
     const docRef = doc(db, 'users', this.user.uid);
     await setDoc(docRef, updates, { merge: true });
     await this.loadUserProfile();
