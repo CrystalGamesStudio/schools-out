@@ -158,6 +158,9 @@ export default class UI {
     }
 
     renderLoginScreen() {
+        this.removeChild('.register-screen');
+        this.removeChild('.forgot-password-screen');
+
         const loginScreenTemplate = window.uiTemplates.get('login-screen-template');
         this.uiOverlay.appendChild(loginScreenTemplate.cloneNode(true));
         const loginButtons = document.getElementById('login-buttons');
@@ -179,13 +182,65 @@ export default class UI {
         this.uiOverlay.style.pointerEvents = 'auto'; // Enable pointer events
     }
 
-    async login() {
+    renderRegisterScreen() {
+        this.removeChild('.login-screen');
+        this.removeChild('.forgot-password-screen');
+        const registerScreenTemplate = window.uiTemplates.get('register-screen-template');
+        this.uiOverlay.appendChild(registerScreenTemplate.cloneNode(true));
+        const registerButtons = document.getElementById('register-buttons');
+        gameConfig.registerButtons.types.forEach(button => {
+            const buttonElement = document.createElement('button');
+            buttonElement.textContent = gameConfig.registerButtons[button].text;
+            buttonElement.style.backgroundColor = gameConfig.registerButtons[button].color;
+            buttonElement.style.color = gameConfig.registerButtons[button].fontColor;
+            buttonElement.addEventListener('click', () => {
+                if (this[gameConfig.registerButtons[button].action]) this[gameConfig.registerButtons[button].action]();
+            });
+            registerButtons.appendChild(buttonElement);
+        });
+        this.uiOverlay.style.pointerEvents = 'auto'; // Enable pointer events
+    }
+
+    renderForgotPasswordScreen() {
+        this.removeChild('.register-screen');
+        this.removeChild('.login-screen');
+
+        const forgotPasswordScreenTemplate = window.uiTemplates.get('forgot-password-screen-template');
+        this.uiOverlay.appendChild(forgotPasswordScreenTemplate.cloneNode(true));
+        const forgotPasswordButtons = document.getElementById('forgot-password-buttons');
+        gameConfig.forgotPasswordButtons.types.forEach(button => {
+            const buttonElement = document.createElement('button');
+            buttonElement.textContent = gameConfig.forgotPasswordButtons[button].text;
+            buttonElement.style.backgroundColor = gameConfig.forgotPasswordButtons[button].color;
+            buttonElement.style.color = gameConfig.forgotPasswordButtons[button].fontColor;
+            buttonElement.addEventListener('click', () => {
+                if (this[gameConfig.forgotPasswordButtons[button].action]) this[gameConfig.forgotPasswordButtons[button].action]();
+            });
+            forgotPasswordButtons.appendChild(buttonElement);
+        });
+        this.uiOverlay.style.pointerEvents = 'auto'; // Enable pointer events
+    }   
+
+    async postLogin() {
         await authService.signIn(document.getElementById('login-email').value, document.getElementById('login-password').value);
 
         if (authService.isAuthenticated()) {
             this.hideLoginScreen();
             this.renderMainMenu();
         }
+    }
+
+    async postRegister() {
+        console.log(
+            document.getElementById('register-email').value,
+            document.getElementById('register-password').value
+        );
+        //await authService.signUp(document.getElementById('register-email').value, document.getElementById('register-password').value);
+    }
+
+    async postForgotPassword() {
+        console.log(document.getElementById('forgot-password-email').value);
+        //await authService.sendPasswordResetEmail(document.getElementById('forgot-password-email').value);
     }
 
     howToMenu() {
@@ -243,6 +298,9 @@ export default class UI {
     backToMenu() {
         this.hideHowToMenu();
         this.renderMainMenu();
+        this.removeChild('.forgot-password-screen');
+        this.removeChild('.register-screen');
+        this.removeChild('.login-screen');
     }
 
     startGame() {
@@ -259,6 +317,7 @@ export default class UI {
         this.hideGameOverScreen();
         this.renderMainMenu();
     }
+
     renderCombo(letter, morse, input, elapsedTime) {
         const comboTemplate = window.uiTemplates.get('combo-template');
         if (!comboTemplate) {

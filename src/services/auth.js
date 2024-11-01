@@ -1,6 +1,7 @@
 import { 
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  sendPasswordResetEmail,
   onAuthStateChanged,
   signOut
 } from 'firebase/auth';
@@ -89,6 +90,15 @@ class AuthService {
       return credential.user;
     } catch (error) {
       console.error('Sign in error:', error);
+      throw error;
+    }
+  }
+
+  async sendPasswordResetEmail(email) {
+    try {
+      await sendPasswordResetEmail(auth, email);
+    } catch (error) {
+      console.error('Send password reset email error:', error);
       throw error;
     }
   }

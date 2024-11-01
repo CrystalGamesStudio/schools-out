@@ -106,10 +106,52 @@ export default {
     }
   },
   "loginButtons": {
-    "types": ["login"],
+    "types": ["login", "register", "forgotPassword"],
     "login": {
       "text": "Login",
-      "action": "login",
+      "action": "postLogin",
+      "color": "#2196F3",
+      "fontColor": "#FFFFFF"
+    },
+    "register": {
+      "text": "Register",
+      "action": "renderRegisterScreen",
+      "color": "#4CAF50",
+      "fontColor": "#FFFFFF"
+    },
+    "forgotPassword": {
+      "text": "Forgot Password",
+      "action": "renderForgotPasswordScreen",
+      "color": "#FF9800",
+      "fontColor": "#FFFFFF"
+    }
+  },
+  "registerButtons": {
+    "types": ["register", "backToLogin"],
+    "register": {
+      "text": "Register",
+      "action": "postRegister",
+      "color": "#4CAF50",
+      "fontColor": "#FFFFFF"
+    },
+    "backToLogin": {
+      "text": "Back to Login",
+      "action": "renderLoginScreen",
+      "color": "#2196F3",
+      "fontColor": "#FFFFFF"
+    }
+  },
+  "forgotPasswordButtons": {
+    "types": ["forgotPassword", "backToLogin"],
+    "forgotPassword": {
+      "text": "Forgot Password",
+      "action": "postForgotPassword",
+      "color": "#FF9800",
+      "fontColor": "#FFFFFF"
+    },
+    "backToLogin": {
+      "text": "Back to Login",
+      "action": "renderLoginScreen",
       "color": "#2196F3",
       "fontColor": "#FFFFFF"
     }

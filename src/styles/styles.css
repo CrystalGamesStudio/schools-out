@@ -419,3 +419,121 @@ body {
 #ui-overlay {
     z-index: 1000;
 }
+
+.register-screen {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    width: 80%;
+    max-width: 400px;
+}
+
+.register-screen h2 {
+    font-size: 36px;
+    margin-bottom: 20px;
+    color: #FFD700;
+}
+
+.register-screen p {
+    font-size: 16px;
+    line-height: 1.5;
+    margin-bottom: 15px;
+}
+
+.register-screen input {
+    display: block;
+    width: 80%;
+    margin: 15px auto;
+    padding: 12px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+}
+
+.register-screen button {
+    display: block;
+    width: 80%;
+    margin: 15px auto;
+    padding: 12px 20px;
+    font-size: 18px;
+    color: white;
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+}
+
+.register-screen button:hover {
+    background-color: #45a049;
+}
+
+.register-screen button:active {
+    transform: scale(0.95);
+}
+
+.forgot-password-screen {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    width: 80%;
+    max-width: 400px;
+}
+
+.forgot-password-screen h2 {
+    font-size: 36px;
+    margin-bottom: 20px;
+    color: #FFD700;
+}
+
+.forgot-password-screen p {
+    font-size: 16px;
+    line-height: 1.5;
+    margin-bottom: 15px;
+}
+
+.forgot-password-screen input {
+    display: block;
+    width: 80%;
+    margin: 15px auto;
+    padding: 12px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+}
+
+.forgot-password-screen button {
+    display: block;
+    width: 80%;
+    margin: 15px auto;
+    padding: 12px 20px;
+    font-size: 18px;
+    color: white;
+    background-color: #FF9800;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+}
+
+.forgot-password-screen button:hover {
+    background-color: #F57C00;
+}
+
+.forgot-password-screen button:active {
+    transform: scale(0.95);
+}
