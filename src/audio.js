@@ -3,10 +3,10 @@ import gameConfig from './game-config.js';
 export default class GameAudio {
     constructor() {
         this.sounds = {
-            gameOver: new window.Audio(gameConfig.audio.gameOver),
-            gameStarts: new window.Audio(gameConfig.audio.gameStarts),
-            lowEnergy: new window.Audio(gameConfig.audio.lowEnergy),
-            jump: new window.Audio(gameConfig.audio.jump)
+            gameOver: new Audio('/music/game-over.wav'),
+            gameStarts: new Audio('/music/game-starts.wav'),
+            lowEnergy: new Audio('/music/low-energy.wav'),
+            jump: new Audio('/music/jump.wav')
         };
         this.isLowEnergyPlaying = false;
         this.isMuted = !gameConfig.audio.defaultOn;
