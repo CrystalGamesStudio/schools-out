@@ -1,14 +1,55 @@
-body {
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #f0f0f0;
-    font-family: Arial, sans-serif;
+@layer styles {
+    body {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f0f0f0;
+        font-family: Arial, sans-serif;
+    }
+
+    button {
+        margin: 10px;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        display: inline-block;
+    }
+
+    button:hover {
+        background-color: #45a049;
+    }
+
+    h1, h2 {
+        font-size: 36px;
+        margin-bottom: 20px;
+        color: #FFD700;
+    }
+
+    p {
+        font-size: 16px;
+        line-height: 1.5;
+        margin-bottom: 15px;
+    }
+
+    input {
+        display: block;
+        width: 80%;
+        margin: 15px auto;
+        padding: 12px 20px;
+        font-size: 16px;
+        border: none;
+        border-radius: 5px;
+    }
 }
 
+/* Rest of your existing CSS classes remain the same */
 #game-container {
     position: relative;
     width: 100vw;
@@ -535,5 +576,30 @@ body {
 }
 
 .forgot-password-screen button:active {
+    transform: scale(0.95);
+}
+
+.audio-control-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    z-index: 9999;
+    transition: transform 0.2s ease;
+}
+
+.audio-control-button:hover {
+    transform: scale(1.1);
+}
+
+.audio-control-button:active {
     transform: scale(0.95);
 }

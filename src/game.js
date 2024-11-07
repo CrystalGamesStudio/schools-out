@@ -4,6 +4,7 @@ import UI from './ui.js';
 import GameAudio from './services/audio.js';
 import gameConfig from './game-config.js';
 import authService from './services/auth.js';
+import AudioControl from './components/audio-control.js';
 
 export default class Game {
     constructor() {
@@ -23,6 +24,10 @@ export default class Game {
         this.isGameStarted = false;
         this.isCharacterSelectionActive = true;
         this.audio = new GameAudio();
+        this.audioControl = new AudioControl(this.audio);
+
+        // Show the audio control when the game starts
+        this.audioControl.show();
         this.isAudioOn = gameConfig.audio.defaultOn;
         if (!this.isAudioOn) {
             this.audio.mute();
@@ -439,5 +444,11 @@ export default class Game {
                 this.ui.renderCombo(this.comboLetter, this.comboMorse, this.comboInput, Date.now() - this.comboStartTime);
             }
         }
+    }
+
+    // When the game ends or transitions to a different screen
+    cleanup() {
+        // ... existing cleanup code ...
+        this.audioControl.hide();
     }
 }
