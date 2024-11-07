@@ -1,4 +1,5 @@
 import gameConfig from './game-config.js';
+import authService from './services/auth.js';
 
 export default class UI {
     constructor(canvas, isMobile, game) {
@@ -77,7 +78,6 @@ export default class UI {
         if (this.scoreElement) {
             this.scoreElement.textContent = score;
         } else {
-            console.error('Score element not found');
             this.renderScoreTemplate(); // Try to re-render if not found
         }
     }
@@ -91,7 +91,6 @@ export default class UI {
                 ? gameConfig.ui.energyBarHighColor 
                 : gameConfig.ui.energyBarLowColor;
         } else {
-            console.error('Energy bar elements not found');
             this.renderEnergyBarTemplate(); // Try to re-render if not found
         }
     }
@@ -100,7 +99,6 @@ export default class UI {
         if (this.obstaclesJumpedElement) {
             this.obstaclesJumpedElement.textContent = obstaclesJumped;
         } else {
-            console.error('Obstacles jumped element not found');
             this.renderObstaclesJumpedTemplate(); // Try to re-render if not found
         }
     }
@@ -109,7 +107,6 @@ export default class UI {
         if (this.levelElement) {
             this.levelElement.textContent = level;
         } else {
-            console.error('Level element not found');
             this.renderLevelTemplate(); // Try to re-render if not found
         }
     }
@@ -131,8 +128,6 @@ export default class UI {
             buttonElement.addEventListener('click', () => {
                 if (this[gameConfig.gameOverButtons[button].action]) {
                     this[gameConfig.gameOverButtons[button].action]();
-                } else {
-                    console.error(`Action ${gameConfig.gameOverButtons[button].action} not found`);
                 }
             });
             gameOverButtons.appendChild(buttonElement);
@@ -151,8 +146,6 @@ export default class UI {
             buttonElement.addEventListener('click', () => {
                 if (this[gameConfig.mainMenuButtons[button].action]) {
                     this[gameConfig.mainMenuButtons[button].action]();
-                } else {
-                    console.error(`Action ${gameConfig.mainMenuButtons[button].action} not found`);
                 }
             });
             mainMenuButtons.appendChild(buttonElement);
@@ -160,8 +153,94 @@ export default class UI {
         this.uiOverlay.style.pointerEvents = 'auto'; // Enable pointer events
     }
 
+    renderLoginScreen() {
+        this.removeChild('.register-screen');
+        this.removeChild('.forgot-password-screen');
+
+        const loginScreenTemplate = window.uiTemplates.get('login-screen-template');
+        this.uiOverlay.appendChild(loginScreenTemplate.cloneNode(true));
+        const loginButtons = document.getElementById('login-buttons');
+        gameConfig.loginButtons.types.forEach(button => {
+            const buttonElement = document.createElement('button');
+            buttonElement.textContent = gameConfig.loginButtons[button].text;
+            buttonElement.style.backgroundColor = gameConfig.loginButtons[button].color;
+            buttonElement.style.color = gameConfig.loginButtons[button].fontColor;
+            buttonElement.addEventListener('click', () => {
+                if (this[gameConfig.loginButtons[button].action]) {
+                    this[gameConfig.loginButtons[button].action]();
+                }
+            });
+            loginButtons.appendChild(buttonElement);
+        });
+
+        this.uiOverlay.style.pointerEvents = 'auto'; // Enable pointer events
+    }
+
+    renderRegisterScreen() {
+        this.removeChild('.login-screen');
+        this.removeChild('.forgot-password-screen');
+        const registerScreenTemplate = window.uiTemplates.get('register-screen-template');
+        this.uiOverlay.appendChild(registerScreenTemplate.cloneNode(true));
+        const registerButtons = document.getElementById('register-buttons');
+        gameConfig.registerButtons.types.forEach(button => {
+            const buttonElement = document.createElement('button');
+            buttonElement.textContent = gameConfig.registerButtons[button].text;
+            buttonElement.style.backgroundColor = gameConfig.registerButtons[button].color;
+            buttonElement.style.color = gameConfig.registerButtons[button].fontColor;
+            buttonElement.addEventListener('click', () => {
+                if (this[gameConfig.registerButtons[button].action]) this[gameConfig.registerButtons[button].action]();
+            });
+            registerButtons.appendChild(buttonElement);
+        });
+        this.uiOverlay.style.pointerEvents = 'auto'; // Enable pointer events
+    }
+
+    renderForgotPasswordScreen() {
+        this.removeChild('.register-screen');
+        this.removeChild('.login-screen');
+
+        const forgotPasswordScreenTemplate = window.uiTemplates.get('forgot-password-screen-template');
+        this.uiOverlay.appendChild(forgotPasswordScreenTemplate.cloneNode(true));
+        const forgotPasswordButtons = document.getElementById('forgot-password-buttons');
+        gameConfig.forgotPasswordButtons.types.forEach(button => {
+            const buttonElement = document.createElement('button');
+            buttonElement.textContent = gameConfig.forgotPasswordButtons[button].text;
+            buttonElement.style.backgroundColor = gameConfig.forgotPasswordButtons[button].color;
+            buttonElement.style.color = gameConfig.forgotPasswordButtons[button].fontColor;
+            buttonElement.addEventListener('click', () => {
+                if (this[gameConfig.forgotPasswordButtons[button].action]) this[gameConfig.forgotPasswordButtons[button].action]();
+            });
+            forgotPasswordButtons.appendChild(buttonElement);
+        });
+        this.uiOverlay.style.pointerEvents = 'auto'; // Enable pointer events
+    }   
+
+    async postLogin() {
+        await authService.signIn(document.getElementById('login-email').value, document.getElementById('login-password').value);
+
+        if (authService.isAuthenticated()) {
+            this.hideLoginScreen();
+            this.renderMainMenu();
+        }
+    }
+
+    async postRegister() {
+        await authService.signUp(document.getElementById('register-email').value, document.getElementById('register-password').value);
+
+        if (authService.isFullyRegistered()) {
+            this.hideRegisterScreen();
+            this.renderLoginScreen();
+        }
+    }
+
+    async postForgotPassword() {
+        await authService.sendPasswordResetEmail(document.getElementById('forgot-password-email').value);
+
+        this.hideForgotPasswordScreen();
+        this.renderLoginScreen();
+    }
+
     howToMenu() {
-        console.log('howToMenu');
         const howToMenuTemplate = window.uiTemplates.get('how-to-template');
         this.uiOverlay.appendChild(howToMenuTemplate.cloneNode(true));
         const howToMenuButtons = document.getElementById('how-to-buttons');
@@ -171,12 +250,9 @@ export default class UI {
             buttonElement.textContent = gameConfig.howToButtons[button].text;
             buttonElement.style.backgroundColor = gameConfig.howToButtons[button].color;
             buttonElement.style.color = gameConfig.howToButtons[button].fontColor;
-            console.log('howToMenuButtons', howToMenuButtons);
             buttonElement.addEventListener('click', () => {
                 if (this[gameConfig.howToButtons[button].action]) {
                     this[gameConfig.howToButtons[button].action]();
-                } else {
-                    console.error(`Action ${gameConfig.howToButtons[button].action} not found`);
                 }
             });
             howToMenuButtons.appendChild(buttonElement);
@@ -188,6 +264,18 @@ export default class UI {
         if (element) {
             this.uiOverlay.removeChild(element);
         }
+    }
+
+    hideForgotPasswordScreen() {
+        this.removeChild('.forgot-password-screen');
+    }
+
+    hideRegisterScreen() {
+        this.removeChild('.register-screen');
+    }
+
+    hideLoginScreen() {
+        this.removeChild('.login-screen');
     }
 
     hideHowToMenu() {
@@ -213,6 +301,9 @@ export default class UI {
     backToMenu() {
         this.hideHowToMenu();
         this.renderMainMenu();
+        this.removeChild('.forgot-password-screen');
+        this.removeChild('.register-screen');
+        this.removeChild('.login-screen');
     }
 
     startGame() {
@@ -229,10 +320,10 @@ export default class UI {
         this.hideGameOverScreen();
         this.renderMainMenu();
     }
+
     renderCombo(letter, morse, input, elapsedTime) {
         const comboTemplate = window.uiTemplates.get('combo-template');
         if (!comboTemplate) {
-            console.error('Combo template not found');
             return;
         }
         
@@ -265,7 +356,6 @@ export default class UI {
     renderComboVisualization(morse, input) {
         const visualization = this.uiOverlay.querySelector('#combo-visualization');
         if (!visualization) {
-            console.error('Combo visualization element not found');
             return;
         }
         visualization.innerHTML = '';
@@ -285,8 +375,6 @@ export default class UI {
             setTimeout(() => {
                 this.hideCorrectComboFeedback();
             }, gameConfig.game.correctComboFeedbackDuration);
-        } else {
-            console.error('Correct combo template not found');
         }
     }
 

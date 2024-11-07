@@ -42,11 +42,21 @@
 ## 🛠️ Technical Details
 
 - Built with HTML5 Canvas and JavaScript
+- Firebase Authentication for user management
+- Firestore database for user data
 - Modular structure with separate classes for game elements
 - Responsive design for both desktop and mobile devices
 - SVG rendering for characters and obstacles
 - Simple physics simulation for jumping and gravity
 - Audio system for sound effects and feedback
+
+## 🚀 Setup
+
+1. Create a Firebase project at [Firebase Console](https://console.firebase.google.com)
+2. Enable Email/Password authentication in Firebase Authentication
+3. Create a Firestore database
+4. Copy your Firebase configuration to `js/config.js`
+5. Open `index.html` in your web browser to launch the game
 
 ## 🌟 Future Enhancements
 
