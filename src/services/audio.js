@@ -1,12 +1,14 @@
 import gameConfig from '../game-config.js';
+import { getBasePath } from '../config.js';
 
 export default class GameAudio {
     constructor() {
+        const basePath = getBasePath();
         this.sounds = {
-            gameOver: new Audio('/music/game-over.wav'),
-            gameStarts: new Audio('/music/game-starts.wav'),
-            lowEnergy: new Audio('/music/low-energy.wav'),
-            jump: new Audio('/music/jump.wav')
+            gameOver: new Audio(`${basePath}/music/game-over.wav`),
+            gameStarts: new Audio(`${basePath}/music/game-starts.wav`),
+            lowEnergy: new Audio(`${basePath}/music/low-energy.wav`),
+            jump: new Audio(`${basePath}/music/jump.wav`)
         };
         this.isLowEnergyPlaying = false;
         this.isMuted = !gameConfig.audio.defaultOn;

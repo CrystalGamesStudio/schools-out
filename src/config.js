@@ -18,4 +18,13 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const analytics = getAnalytics(app);
 
+export const getBasePath = () => {
+  // In development, use empty base path
+  if (import.meta.env.DEV) {
+    return '';
+  }
+  // In production, use the schools-out base path
+  return '/schools-out';
+};
+
 export { auth, db, analytics };

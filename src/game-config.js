@@ -1,3 +1,7 @@
+import { getBasePath } from './config.js';
+
+const basePath = getBasePath();
+
 export default {
   "characters": {
     "types": ["student", "nerd", "athlete", "artist", "rebel"],
@@ -236,11 +240,11 @@ export default {
     "energyBarLowColor": "red"
   },
   "audio": {
-    "gameOver": "public/music/game-over.wav",
-    "gameStarts": "public/music/game-starts.wav",
-    "lowEnergy": "public/music/low-energy.wav",
-    "jump": "public/music/jump.wav",
-    "defaultOn": false
+    "gameOver": `${basePath}/music/game-over.wav`,
+    "gameStarts": `${basePath}/music/game-starts.wav`,
+    "lowEnergy": `${basePath}/music/low-energy.wav`,
+    "jump": `${basePath}/music/jump.wav`,
+    "defaultOn": true
   },
   "morse": {
     "A": ".-", "B": "-...", "C": "-.-.", "D": "-..", "E": ".", "F": "..-.", "G": "--.",
