@@ -5,7 +5,7 @@ export default defineConfig({
     outDir: 'dist',
     assetsDir: 'assets',
     sourcemap: true,
-    base: '/schools-out',
     publicDir: 'public'
-  }
+  },
+  base: '/schools-out/'
 }); 
